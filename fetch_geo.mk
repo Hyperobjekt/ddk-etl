@@ -16,9 +16,6 @@ states-geoid =  "this.properties.GEOID = this.properties.STATE"
 geo_types = tracts
 GENERATED_FILES = $(foreach t, $(geo_types), geojson/$(t).geojson)
 
-# build ID to use for source data
-BUILD_ID?=2018-11-28
-
 .PHONY: all deploy help
 
 ## all                 : Create all census GeoJSON
@@ -32,16 +29,15 @@ help: census.mk
 ## deploy              : Deploy gzipped census data to S3
 deploy:
 	for f in geojson/*.geojson; do gzip $$f; done
-	for f in geojson/*.gz; do aws s3 cp $$f s3://$(S3_SOURCE_DATA_BUCKET)/$(BUILD_ID)/census/$$(basename $$f) --acl=public-read; done
+	for f in geojson/*.gz; do aws s3 cp $$f s3://ddk-source/$$(basename $$f) --acl=public-read; done
 
-## geojson/%.geojson    : Download and clean census GeoJSON
+## geojson/%.geojson   : Download and clean census GeoJSON
 .SECONDARY:
-census/%.geojson:
+geojson/%.geojson:
 	mkdir -p geojson/$*
-	wget --no-use-server-timestamps -np -nd -r -P census/$* -A '$($*-pattern)' $(census_ftp_base)
-	for f in ./census/$*/*.zip; do unzip -d ./census/$* $$f; done
-	mapshaper ./census/$*/*.shp combine-files \
+	wget --no-use-server-timestamps -np -nd -r -P geojson/$* -A '$($*-pattern)' $(census_ftp_base)
+	for f in ./geojson/$*/*.zip; do unzip -d ./geojson/$* $$f; done
+	mapshaper ./geojson/$*/*.shp combine-files \
 		-each $($*-geoid) \
 		-filter "!this.properties.GEOID.startsWith('72')" \
-		-filter-fields GEOID \
 		-o $@ combine-layers format=geojson

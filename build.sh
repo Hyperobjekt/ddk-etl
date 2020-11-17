@@ -7,4 +7,7 @@
 # perform any data shaping / tileset builds, and then deploy.
 ########
 
-echo "TODO: perform build"
+echo "fetching source geojson"
+
+make -f fetch_geo.mk all
+
