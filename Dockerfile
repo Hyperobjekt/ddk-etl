@@ -1,5 +1,5 @@
 # Start from ubuntu
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 
 # Update repos and install dependencies
 RUN apt-get update \
