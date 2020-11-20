@@ -1,0 +1,39 @@
+column,type,label,description,show
+geoid,text,2010 census tract FIPS codes,,yes
+year,numeric,Year of observation (2010 or 2015),,yes
+in100,numeric,In one of the 100 largest metro areas,"This variable is equal to 1 if the census tract is located in one of the 100 largest metro areas (as of 2015), zero if located in a metro- or micropolitan area that does not belong to the 100 largest metro areas, and blank if it is located outside a metro- or micropolitan area.",yes
+msaid15,text,Metro/Micro Area (2015) FIPS Code,,yes
+msaname15,text,Metro/Micro Area (2015) Name,,yes
+countyfips,text,County FIPS Code,,yes
+statefips,text,State FIPS Code,,yes
+stateusps,text,State USPS Code,,yes
+pop,numeric,"Number of children aged 0-17, ACS (2008-12 for 2010, 2013-17 for 2015)",,yes
+ED_PRXECE,numeric,Early childhood education centers,"Number of ECE centers within a 5-mile radius, converted to natural log units.",yes
+ED_PRXHQECE,numeric,High-quality early childhood education centers,"Number of NAEYC accredited centers within a 5-mile radius, converted to natural log units.",yes
+ED_ECENROL,numeric,Early childhood education enrollment,"Percentage 3- and 4-year-olds enrolled in nursery school, preschool or kindergarten.",yes
+ED_READING,numeric,Third grade reading proficiency,"Percentage third graders scoring proficient on standardized reading tests, converted to NAEP scale score points.",yes
+ED_MATH,numeric,Third grade math proficiency,"Percentage third graders scoring proficient on standardized math tests, converted to NAEP scale score points.",yes
+ED_HSGRAD,numeric,High school graduation rate,Percentage ninth graders graduating from high school on time.,yes
+ED_APENR,numeric,Advanced Placement course enrollment,Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders.,yes
+ED_COLLEGE,numeric,College enrollment in nearby institutions ,Percentage 18-24 year-olds enrolled in college within 25-mile radius.,yes
+ED_SCHPOV,numeric,School poverty,Percentage students in elementary schools eligible for free or reduced-price lunches.,yes
+ED_TEACHXP,numeric,Teacher experience,Percentage teachers in their first and second year.,yes
+ED_ATTAIN,numeric,Adult educational attainment,Percentage adults ages 25 and over with a college degree or higher.,yes
+HE_FOOD,numeric,Access to healthy food,Percentage households without a car located further than a half-mile from the nearest supermarket.,yes
+HE_GREEN,numeric,Access to green space,"Percentage impenetrable surface areas such as rooftops, roads or parking lots.",yes
+HE_WALK,numeric,Walkability,EPA Walkability Index.,yes
+HE_VACANCY,numeric,Housing vacancy rate,Percentage housing units that are vacant.,yes
+HE_SUPRFND,numeric,Hazardous waste dump sites,"Average number of Superfund sites within a 2-mile radius, converted to natural log units.",yes
+HE_RSEI,numeric,"Industrial pollutants in air, water or soil","Index of toxic chemicals released by industrial facilities, converted to natural log units.",yes
+HE_PM25,numeric,Airborne microparticles,Mean estimated microparticle (PM2.5) concentration.,yes
+HE_OZONE,numeric,Ozone concentration,Mean estimated 8-hour average ozone concentration.,yes
+HE_HEAT,numeric,Extreme heat exposure,Summer days with maximum temperature above 90F.,yes
+HE_HLTHINS,numeric,Health insurance coverage,Percentage individuals ages 0-64 with health insurance coverage.,yes
+SE_EMPRAT,numeric,Employment rate,Percentage adults ages 25-54 who are employed.,yes
+SE_JOBPROX,numeric,Commute duration,Percentage workers commuting more than one hour one way.,yes
+SE_POVRATE,numeric,Poverty rate,Percentage individuals living in households with incomes below 100% of the federal poverty threshold.,yes
+SE_PUBLIC,numeric,Public assistance rate,Percentage households receiving cash public assistance or Food Stamps/Supplemental Nutrition Assistance Program.,yes
+SE_HOME,numeric,Homeownership rate,Percentage owner-occupied housing units.,yes
+SE_OCC,numeric,High-skill employment,"Percentage individuals ages 16 and over employed in management, business, financial, computer, engineering, science, education, legal, community service, health care practitioner, health technology, arts and media occupations.",yes
+SE_MHE,numeric,Median household income,Median income of all households.,yes
+SE_SINGLE,numeric,Single-headed households,Percentage family households that are single-parent headed.,yes

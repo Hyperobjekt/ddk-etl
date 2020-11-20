@@ -1,0 +1,35 @@
+column,type,label,description,show
+geoid,text,2010 census tract FIPS codes,,yes
+year,numeric,Year of observation (2010 or 2015),,yes
+in100,numeric,In one of the 100 largest metro areas,"This variable is equal to 1 if the census tract is located in one of the 100 largest metro areas (as of 2015), zero if located in a metro- or micropolitan area that does not belong to the 100 largest metro areas, and blank if it is located outside a metro- or micropolitan area.",yes
+msaid15,text,Metro/Micro Area (2015) FIPS Code,,yes
+msaname15,text,Metro/Micro Area (2015) Name,,yes
+countyfips,text,County FIPS Code,,yes
+statefips,text,State FIPS Code,,yes
+stateusps,text,State USPS Code,,yes
+pop,numeric,"Number of children aged 0-17, ACS (2008-12 for 2010, 2013-17 for 2015)",,yes
+zED_PRXECE,numeric,Early childhood education centers,"Number of ECE centers within a 5-mile radius, converted to natural log units, transformed to z-scores.",yes
+zED_PRXHQECE,numeric,High-quality early childhood education centers,"Number of NAEYC accredited centers within a 5-mile radius, converted to natural log units, transformed to z-scores.",yes
+zED_ECENROL,numeric,Early childhood education enrollment,"Percentage 3- and 4-year-olds enrolled in nursery school, preschool or kindergarten, transformed to z-scores.",yes
+zED_READING,numeric,Third grade reading proficiency,"Percentage third graders scoring proficient on standardized reading tests, converted to NAEP scale score points, transformed to z-scores.",yes
+zED_MATH,numeric,Third grade math proficiency,"Percentage third graders scoring proficient on standardized math tests, converted to NAEP scale score points, transformed to z-scores.",yes
+zED_HSGRAD,numeric,High school graduation rate,"Percentage ninth graders graduating from high school on time, transformed to z-scores.",yes
+zED_APENR,numeric,Advanced Placement course enrollment,"Ratio of students enrolled in at least one AP course to the number of 11th and 12th graders, transformed to z-scores.",yes
+zED_COLLEGE,numeric,College enrollment in nearby institutions ,"Percentage 18-24 year-olds enrolled in college within 25-mile radius, transformed to z-scores.",yes
+zED_SCHPOV,numeric,School poverty,"Percentage students in elementary schools eligible for free or reduced-price lunches, transformed to z-scores and multiplied by -1.",yes
+zED_TEACHXP,numeric,Teacher experience,"Percentage teachers in their first and second year, transformed to z-scores and multiplied by -1.",yes
+zED_ATTAIN,numeric,Adult educational attainment,"Percentage adults ages 25 and over with a college degree or higher, transformed to z-scores.",yes
+zHE_FOOD,numeric,Access to healthy food,"Percentage households without a car located further than a half-mile from the nearest supermarket, transformed to z-scores and multiplied by -1.",yes
+zHE_GREEN,numeric,Access to green space,"Percentage impenetrable surface areas such as rooftops, roads or parking lots, transformed to z-scores and multiplied by -1.",yes
+zHE_WALK,numeric,Walkability,"EPA Walkability Index, transformed to z-scores.",yes
+zHE_VACANCY,numeric,Housing vacancy rate,"Percentage housing units that are vacant, transformed to z-scores and multiplied by -1.",yes
+zHE_SUPRFND,numeric,Hazardous waste dump sites,"Average number of Superfund sites within a 2-mile radius, converted to natural log units, transformed to z-scores and multiplied by -1.",yes
+zHE_RSEI,numeric,"Industrial pollutants in air, water or soil","Index of toxic chemicals released by industrial facilities, converted to natural log units, transformed to z-scores and multiplied by -1.",yes
+zHE_PM25,numeric,Airborne microparticles,"Mean estimated microparticle (PM2.5) concentration, transformed to z-scores and multiplied by -1.",yes
+zHE_OZONE,numeric,Ozone concentration,"Mean estimated 8-hour average ozone concentration, transformed to z-scores and multiplied by -1.",yes
+zHE_HEAT,numeric,Extreme heat exposure,"Summer days with maximum temperature above 90F, transformed to z-scores and multiplied by -1.",yes
+zHE_HLTHINS,numeric,Health insurance coverage,"Percentage individuals ages 0-64 with health insurance coverage, transformed to z-scores.",yes
+zSE_EMPRAT,numeric,Employment rate,"Percentage adults ages 25-54 who are employed, transformed to z-scores.",yes
+zSE_JOBPROX,numeric,Commute duration,"Percentage workers commuting more than one hour one way, transformed to z-scores and multiplied by -1.",yes
+zSE_ECRES,numeric,Economic resource index,"Economic resource index, combines poverty rate, public assistance rate, homeownership rate, high skill employment, and median household income, transformed to z-scores.",yes
+zSE_SINGLE,numeric,Single-headed households,"Percentage family households that are single-parent headed, transformed to z-scores and multiplied by -1.",yes

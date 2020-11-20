@@ -28,7 +28,11 @@ help: census.mk
 
 ## deploy              : Deploy gzipped census data to S3
 deploy:
+	cd geojson && ls
+	cd ..
+	echo 'Gzipping geojson.'
 	for f in geojson/*.geojson; do gzip $$f; done
+	echo 'Uploading gzips.'
 	for f in geojson/*.gz; do aws s3 cp $$f s3://ddk-source/$$(basename $$f) --acl=public-read; done
 
 ## geojson/%.geojson   : Download and clean census GeoJSON
@@ -41,3 +45,4 @@ geojson/%.geojson:
 		-each $($*-geoid) \
 		-filter "!this.properties.GEOID.startsWith('72')" \
 		-o $@ combine-layers format=geojson
+	echo '-----> Done writing geojson. <-----'
