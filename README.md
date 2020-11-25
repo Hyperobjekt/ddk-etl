@@ -22,6 +22,10 @@ the entire chain of scripts should be run from `./build.sh` so that running the 
 
 e.g. `docker run hyperobjekt/ddk-etl`
 
+```
+docker run --env-file .env hyperobjekt/ddk-etl
+```
+
 ## Future
 
 - Add docker image to dockerhub

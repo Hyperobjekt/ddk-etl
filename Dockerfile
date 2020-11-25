@@ -46,8 +46,9 @@ COPY . /app
 WORKDIR /app/
 
 # Install Python packages
-# RUN pip3 install pipenv && pipenv install --system
-# RUN npm install
+RUN pip3 install pipenv && pipenv install --system --skip-lock # System install python libs
+# RUN aws --version # Verify aws-cli installation
+# RUN pip show pandas # Verify pandas installation
 
 # make entrypoint executable
 RUN chmod +x build.sh
