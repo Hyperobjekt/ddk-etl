@@ -70,8 +70,8 @@ fi
 # Deploy the data that was built
 if [[ $SHOULD_DEPLOY -eq 1 ]]; then
 
-      echo 'aws version = '
-      aws --version
+      # echo 'aws version = '
+      # aws --version
       if [[ -z "${AWS_ACCESS_ID}" ]]; then
           printf '%s\n' "Missing AWS_ACCESS_ID environment variable, could not configure AWS CLI." >&2
           exit 1
@@ -83,10 +83,18 @@ if [[ $SHOULD_DEPLOY -eq 1 ]]; then
       aws configure set aws_access_key_id $AWS_ACCESS_ID
       aws configure set aws_secret_access_key $AWS_SECRET_KEY
       aws configure set default.region us-east-1
-      make deploy_s3
+      # make deploy_s3
 
 fi
 
-echo "fetching source geojson"
+echo "Fetching source data."
+
+make -f ./scripts/fetch_raw_data.mk download
+
+echo "Processing source data."
+
+python3 ./scripts/process_source_data.py
+
+echo "Fetching source geojson."
 
 # make -f ./scripts/fetch_geo.mk all deploy
