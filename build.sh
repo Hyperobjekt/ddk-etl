@@ -13,14 +13,15 @@ SHOULD_BUILD_TRACTS=1
 SHOULD_BUILD_STATES=0
 SHOULD_BUILD_COUNTIES=0
 SHOULD_BUILD_ZIPS=0
+DEBUG=0
 
 # Loop through arguments and process them
 for arg in "$@"
 do
     case $arg in
-        -v=*|--version=*)
-        DATA_VERSION="${arg#*=}"
-        shift # Remove --file= from processing
+        --debug)
+        DEBUG=1
+        shift # Remove --no-clean from processing
         ;;
         --no-clean)
         SHOULD_CLEAN=0
@@ -67,6 +68,12 @@ if [[ $SHOULD_CLEAN -eq 1 ]]; then
     make clean
 fi
 
+echo "Fetching source data."
+make -f ./scripts/fetch_raw_data.mk download
+
+echo "Processing source data."
+python3 ./scripts/process_source_data.py
+
 # Deploy the data that was built
 if [[ $SHOULD_DEPLOY -eq 1 ]]; then
 
@@ -87,13 +94,11 @@ if [[ $SHOULD_DEPLOY -eq 1 ]]; then
 
 fi
 
-echo "Fetching source data."
 
-make -f ./scripts/fetch_raw_data.mk download
 
-echo "Processing source data."
 
-python3 ./scripts/process_source_data.py
+
+
 
 echo "Fetching source geojson."
 

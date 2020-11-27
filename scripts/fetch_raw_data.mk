@@ -2,7 +2,7 @@
 
 csv_types = index raw pop zscores 
 
-DOWNLOADED_FILES = $(foreach t, $(csv_types), csvs/$(t).csv)
+DOWNLOADED_FILES = $(foreach t, $(csv_types), source_csvs/$(t).csv)
 
 .PHONY: download help
 
@@ -14,8 +14,8 @@ download: $(DOWNLOADED_FILES)
 help: census.mk
 	perl -ne '/^## / && s/^## //g && print' $<
 
-## geojson/%.geojson   : Download and clean census GeoJSON
+## source_csvs/%.csv   : Download the client data files.
 .SECONDARY:
-csvs/%.csv:
-	mkdir -p csvs && cd csvs && curl $(RAW_DATA_PATH)/$*/$*.csv -o $*.csv && ls
-	echo '-----> Done downloading csvs. <-----'
+source_csvs/%.csv:
+	mkdir -p source_csvs && cd source_csvs && curl $(RAW_DATA_PATH)$*/$*.csv -o $*.csv && ls && head --lines=5 $*.csv
+	$(info Downloaded $*.csv)
