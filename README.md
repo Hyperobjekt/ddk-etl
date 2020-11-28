@@ -27,7 +27,7 @@ docker run --env-file .env hyperobjekt/ddk-etl
 ```
 
 ### Flags
-- `--debug` prints extra debug info.
+
 - `--env-file` indicates the `.env` file to pass to Docker
 
 ## Future

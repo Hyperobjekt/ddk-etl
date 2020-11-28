@@ -5,7 +5,8 @@ print("Processing source data...")
 
 SOURCE_DIR = './source_csvs'
 OUTPUT_DIR = './proc_csvs'
-print('source dir is ', SOURCE_DIR)
+# print('source dir is ', SOURCE_DIR)
+
 # Columns with categorical data that we will change from string to number.
 LONG_STRING_COLS = ['c5_ed_nat', 'c5_he_nat', 'c5_se_nat', 'c5_coi_nat', 'c5_ed_stt', 'c5_he_stt', 'c5_se_stt', 'c5_coi_stt']
 # Key for these conversions of string to number.
@@ -33,7 +34,7 @@ for csv in csvs_arr:
     source.columns = source.columns.str.lower()
     # print(source.head())
     # Replace categorical strings in each categorical column with numbers.
-    if (csv == 'index.csv'):
+    if (csv == 'index'):
         print('Processing categorical columns...')
         source[LONG_STRING_COLS] = source[LONG_STRING_COLS].replace(REPLACE_DICT, inplace=False)
         print(source[LONG_STRING_COLS].head())
@@ -65,14 +66,14 @@ for csv in csvs_arr:
     
     # Join renamed.
     proc15 = pre15.join(data15)
-    print('proc15')
-    print(proc15.iloc[:,0:15].head())
+    # print('proc15')
+    # print(proc15.iloc[:,0:15].head())
     
     # Merge '10 and '15 dataframes.
     proc = proc10.merge(proc15)
-    print('proc')
-    print(proc.iloc[:,20:40].head())
+    # print('proc')
+    # print(proc.iloc[:,20:40].head())
 
     # Save each merged dataframe to a new directory for the processed files..
-    proc.to_csv(OUTPUT_DIR + '/' + csv + '.csv')
-    proc.to_json(OUTPUT_DIR + '/' + csv + '.json')
+    proc.to_csv(OUTPUT_DIR + '/' + csv + '.csv', index=False)
+    proc.to_json(OUTPUT_DIR + '/' + csv + '.json', 'records')
