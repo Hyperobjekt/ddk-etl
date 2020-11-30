@@ -1,10 +1,13 @@
 import os
+import sys
 import pandas as pd
 
 print("Processing source data...")
 
-SOURCE_DIR = './source_csvs'
-OUTPUT_DIR = './proc_csvs'
+shapetype = sys.argv[1] # `tract`, `county`, `state`, or `zip`.
+
+SOURCE_DIR = './source/' + shapetype
+OUTPUT_DIR = './proc' + shapetype
 # print('source dir is ', SOURCE_DIR)
 
 # Columns with categorical data that we will change from string to number.

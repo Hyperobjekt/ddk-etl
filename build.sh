@@ -7,60 +7,10 @@
 # perform any data shaping / tileset builds, and then deploy.
 ########
 
-SHOULD_DEPLOY=1
-SHOULD_CLEAN=1
-SHOULD_BUILD_TRACTS=1
-SHOULD_BUILD_STATES=0
-SHOULD_BUILD_COUNTIES=0
-SHOULD_BUILD_ZIPS=0
-DEBUG=0
-
-# Loop through arguments and process them
-for arg in "$@"
-do
-    case $arg in
-        --debug)
-        DEBUG=1
-        shift # Remove --no-clean from processing
-        ;;
-        --no-clean)
-        SHOULD_CLEAN=0
-        shift # Remove --no-clean from processing
-        ;;
-        --no-deploy)
-        SHOULD_DEPLOY=0
-        shift # Remove --no-deploy from processing
-        ;;
-        --build-tracts)
-        SHOULD_BUILD_TRACTS=1
-        shift # Remove --build-tracts from processing
-        ;;
-        --build-states)
-        SHOULD_BUILD_STATES=1
-        shift # Remove --tiles from processing
-        ;;
-        --build-counties)
-        SHOULD_BUILD_COUNTIES=1
-        shift # Remove --tiles from processing
-        ;;
-        --build-zips)
-        SHOULD_BUILD_ZIPS=1
-        shift # Remove --tiles from processing
-        ;;
-        --prepare-only)
-        PREPARE_ONLY=1
-        shift # Remove --prepare-only from processing
-        ;;
-        -f=*|--file=*)
-        SOURCE_FILE="${arg#*=}"
-        shift # Remove --file= from processing
-        ;;
-        *)
-        OTHER_ARGUMENTS+=("$1")
-        shift # Remove generic argument from processing
-        ;;
-    esac
-done
+SHOULD_DEPLOY=$(if [ "${DEPLOY}" -eq 1 ]; then echo 1; else echo 0; fi)
+SHOULD_CLEAN=$(if [ "${CLEAN}" -eq 1 ]; then echo 1; else echo 0; fi)
+SHOULD_BUILD=$(if [ -z "${BUILD_TYPES}" ]; then echo "${BUILD_TYPES}"; else echo "tract"; fi)
+DEBUG=$(if [ "${DEBUG}" -eq 1 ]; then echo 1; else echo 0; fi)
 
 # clean existing build
 if [[ $SHOULD_CLEAN -eq 1 ]]; then
@@ -68,11 +18,64 @@ if [[ $SHOULD_CLEAN -eq 1 ]]; then
     make clean
 fi
 
-echo "Fetching source data."
-make -f ./scripts/fetch_raw_data.mk download
+# Fetch tract source data.
+if [ ! -z $SHOULD_BUILD ]; then
+    echo "Fetching tract source data."
+    # make -f ./scripts/fetch_raw_data.mk $SHOULD_BUILD
+    bash ./scripts/fetch_raw_data.sh $SHOULD_BUILD
+    # echo "Processing tract source data."
+    # python3 ./scripts/process_source_data.py tract
+fi
 
-echo "Processing source data."
-python3 ./scripts/process_source_data.py
+# Fetch state source data.
+# if [[ $SHOULD_BUILD_STATES -eq 1 ]]; then
+#     echo "Fetching state source data."
+#     make -f ./scripts/fetch_raw_data.mk states
+#     echo "Processing tract source data."
+#     python3 ./scripts/process_source_data.py tract
+# fi
+# 
+# # Fetch state county data.
+# if [[ $SHOULD_BUILD_COUNTIES -eq 1 ]]; then
+#     echo "Fetching county source data."
+#     make -f ./scripts/fetch_raw_data.mk counties
+# fi
+# 
+# # Fetch state county data.
+# if [[ $SHOULD_BUILD_ZIPS -eq 1 ]]; then
+#     echo "Fetching zip source data."
+#     make -f ./scripts/fetch_raw_data.mk zips
+# fi
+
+# echo "Fetching tract source data."
+# make -f ./scripts/fetch_raw_data.mk download
+
+# Fetch tract source data.
+# if [[ $SHOULD_BUILD_TRACTS -eq 1 ]]; then
+    # echo "Processing tract source data."
+    # python3 ./scripts/process_source_data.py tract
+# fi
+# 
+# # Fetch state source data.
+# if [[ $SHOULD_BUILD_STATES -eq 1 ]]; then
+#     echo "Processing state source data."
+#     python3 ./scripts/process_source_data.py states
+# fi
+# 
+# # Fetch state county data.
+# if [[ $SHOULD_BUILD_COUNTIES -eq 1 ]]; then
+#     echo "Processing county source data."
+#     python3 ./scripts/process_source_data.py counties
+# fi
+# 
+# # Fetch state county data.
+# if [[ $SHOULD_BUILD_ZIPS -eq 1 ]]; then
+#     echo "Processing zip source data."
+#     python3 ./scripts/process_source_data.py zips
+# fi
+
+# echo "Processing source data."
+# python3 ./scripts/process_source_data.py
 
 # Deploy the data that was built
 if [[ $SHOULD_DEPLOY -eq 1 ]]; then
