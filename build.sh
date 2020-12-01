@@ -1,15 +1,22 @@
 #!/bin/bash
 
-########
-# This script is a placeholder entry point for the dockerfile
-# At some point, this script will run when the dockerfile is run
-# and will handle running the tasks needed to fetch the source data
-# perform any data shaping / tileset builds, and then deploy.
-########
-
+# Fetch environment values.
+# Should the data be deployed? 
 SHOULD_DEPLOY=$(if [ "${DEPLOY}" -eq 1 ]; then echo 1; else echo 0; fi)
+# Clean up?
 SHOULD_CLEAN=$(if [ "${CLEAN}" -eq 1 ]; then echo 1; else echo 0; fi)
-SHOULD_BUILD=$(if [ -z "${BUILD_TYPES}" ]; then echo "${BUILD_TYPES}"; else echo "tract"; fi)
+# BUILD_TYPES options should be a comma-delineated list.
+# options are: tracts, states, counties, zips
+# ex: BUILD_TYPES=tracts,states
+SHOULD_BUILD=$(if [ ! -z "${BUILD_TYPES}" ]; then echo "${BUILD_TYPES}"; else echo "tracts"; fi)
+# Whether or not to fetch and process bar chart data.
+SHOULD_BARCHART=$(if [ ! -z "${BAR_CHARTS}" ]; then echo "${BAR_CHARTS}"; else echo 1; fi)
+# Build dictionaries list of strings.
+SHOULD_DICT=$(if [ ! -z "${BUILD_DICT}" ]; then echo "${BUILD_DICT}"; else echo 0; fi)
+# Build metro list.
+SHOULD_METRO=$(if [ ! -z "${BUILD_METRO_LIST}" ]; then echo "${BUILD_METRO_LIST}"; else echo 0; fi)
+
+# Print extra debug info?
 DEBUG=$(if [ "${DEBUG}" -eq 1 ]; then echo 1; else echo 0; fi)
 
 # clean existing build
@@ -22,9 +29,18 @@ fi
 if [ ! -z $SHOULD_BUILD ]; then
     echo "Fetching tract source data."
     # make -f ./scripts/fetch_raw_data.mk $SHOULD_BUILD
-    bash ./scripts/fetch_raw_data.sh $SHOULD_BUILD
+    bash ./scripts/fetch_raw_data.sh ${RAW_DATA_PATH} $SHOULD_BUILD $SHOULD_BARCHART
     # echo "Processing tract source data."
-    # python3 ./scripts/process_source_data.py tract
+    python3 ./scripts/process_shape_data.py $SHOULD_BUILD $SHOULD_METRO
+    
+    if [ ! -z $SHOULD_BARCHART ]; then
+      # Process barchart data.
+    fi
+    
+    if [ ! -z $SHOULD_DICT ]; then
+      # Build dictionary string set.
+      python3 ./scripts/build_dictionary.py $SHOULD_BUILD
+    fi
 fi
 
 # Fetch state source data.
