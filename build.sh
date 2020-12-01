@@ -43,56 +43,6 @@ if [ ! -z $SHOULD_BUILD ]; then
     fi
 fi
 
-# Fetch state source data.
-# if [[ $SHOULD_BUILD_STATES -eq 1 ]]; then
-#     echo "Fetching state source data."
-#     make -f ./scripts/fetch_raw_data.mk states
-#     echo "Processing tract source data."
-#     python3 ./scripts/process_source_data.py tract
-# fi
-# 
-# # Fetch state county data.
-# if [[ $SHOULD_BUILD_COUNTIES -eq 1 ]]; then
-#     echo "Fetching county source data."
-#     make -f ./scripts/fetch_raw_data.mk counties
-# fi
-# 
-# # Fetch state county data.
-# if [[ $SHOULD_BUILD_ZIPS -eq 1 ]]; then
-#     echo "Fetching zip source data."
-#     make -f ./scripts/fetch_raw_data.mk zips
-# fi
-
-# echo "Fetching tract source data."
-# make -f ./scripts/fetch_raw_data.mk download
-
-# Fetch tract source data.
-# if [[ $SHOULD_BUILD_TRACTS -eq 1 ]]; then
-    # echo "Processing tract source data."
-    # python3 ./scripts/process_source_data.py tract
-# fi
-# 
-# # Fetch state source data.
-# if [[ $SHOULD_BUILD_STATES -eq 1 ]]; then
-#     echo "Processing state source data."
-#     python3 ./scripts/process_source_data.py states
-# fi
-# 
-# # Fetch state county data.
-# if [[ $SHOULD_BUILD_COUNTIES -eq 1 ]]; then
-#     echo "Processing county source data."
-#     python3 ./scripts/process_source_data.py counties
-# fi
-# 
-# # Fetch state county data.
-# if [[ $SHOULD_BUILD_ZIPS -eq 1 ]]; then
-#     echo "Processing zip source data."
-#     python3 ./scripts/process_source_data.py zips
-# fi
-
-# echo "Processing source data."
-# python3 ./scripts/process_source_data.py
-
 # Deploy the data that was built
 if [[ $SHOULD_DEPLOY -eq 1 ]]; then
 
