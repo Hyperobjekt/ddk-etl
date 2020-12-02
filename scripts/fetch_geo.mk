@@ -13,7 +13,7 @@ cities-geoid = "this.properties.GEOID = this.properties.STATE + this.properties.
 counties-geoid = "this.properties.GEOID = this.properties.STATE + this.properties.COUNTY"
 states-geoid =  "this.properties.GEOID = this.properties.STATE"
 
-geo_types = tracts
+geo_types = tracts states cities
 GENERATED_FILES = $(foreach t, $(geo_types), geojson/$(t).geojson)
 
 .PHONY: all deploy help

@@ -3,15 +3,12 @@ import sys
 import pandas as pd
 import json
 
+from constants import *
+
 print("Processing bar chart data...")
 
-SOURCE_DIR = './source/'
-OUTPUT_DIR = './proc/'
-
-# Key for these conversions of string to number.
-REPLACE_DICT = {'Very Low': 0, 'Low': 1, 'Moderate': 2, 'High': 3, 'Very High': 4}
-# Key for these conversions of string to number.
-REPLACE_COLS_DICT = {'aian': 'as', 'api': 'ap', 'black': 'b', 'hisp': 'hi', 'white': 'w'}
+SOURCE_DIR = './source'
+OUTPUT_DIR = './proc'
 
 # Get list of files.
 chart_data_arr = ['msaname15', 'nation', 'stateusps']
