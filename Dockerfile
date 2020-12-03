@@ -7,7 +7,7 @@ RUN apt-get update \
   && apt-get -y install git build-essential \
     libsqlite3-dev zlib1g-dev libssl-dev \
     python3-dev python3-pip gzip curl wget \
-    libspatialindex-dev unzip locales
+    libspatialindex-dev unzip locales tree
 
 # Set locale for UTF 8 encoding in shell
 RUN locale-gen en_US.UTF-8

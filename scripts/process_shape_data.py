@@ -111,6 +111,7 @@ for shape in shapetypes:
                     print('building metros')
                     metros = proc.loc[:, ['msaid15', 'msaname15', 'countyfips', 'statefips', 'stateusps', 'in100']]
                     metros = metros.drop_duplicates(subset=['msaid15'], keep='first')
+                    metros = metros.dropna(axis=0)
                     # print('metros')
                     # print(metros.head())
                     metros.to_csv(OUTPUT_DIR + '/helpers/metros.csv', index=False)

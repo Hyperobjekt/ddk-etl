@@ -18,7 +18,7 @@
    - generate tilesets (`.mbtiles`) from geojson files with data (see [tippecanoe](https://github.com/mapbox/tippecanoe))
    - deploy generated tilesets to mapbox (see `deploy_tilesets` [make command](https://github.com/Hyperobjekt/seda-etl/blob/master/Makefile#L465) and [deploy script](https://github.com/Hyperobjekt/seda-etl/blob/master/scripts/deploy_tilesets.js))
 
-the entire chain of scripts should be run from `./build.sh` so that running the dockerfile completed the entire build.
+the entire chain of scripts should be run from `./build.sh` so that running the dockerfile completes the entire build.
 
 e.g. `docker run hyperobjekt/ddk-etl`
 

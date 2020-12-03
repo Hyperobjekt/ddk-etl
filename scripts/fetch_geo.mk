@@ -33,7 +33,7 @@ deploy:
 	echo 'Gzipping geojson.'
 	for f in geojson/*.geojson; do gzip $$f; done
 	echo 'Uploading gzips.'
-	for f in geojson/*.gz; do aws s3 cp $$f s3://ddk-source/$$(basename $$f) --acl=public-read; done
+	for f in geojson/*.gz; do aws s3 cp $$f s3://ddk-source/geojson/$$(basename $$f) --acl=public-read; done
 
 ## geojson/%.geojson   : Download and clean census GeoJSON
 .SECONDARY:
@@ -45,4 +45,4 @@ geojson/%.geojson:
 		-each $($*-geoid) \
 		-filter "!this.properties.GEOID.startsWith('72')" \
 		-o $@ combine-layers format=geojson
-	echo '-----> Done writing geojson. <-----'
+	echo 'Done writing geojson.'
