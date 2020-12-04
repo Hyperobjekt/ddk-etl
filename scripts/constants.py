@@ -3,38 +3,6 @@ LONG_STRING_COLS = ['c5_ed_nat', 'c5_he_nat', 'c5_se_nat', 'c5_coi_nat', 'c5_ed_
 # Key for these conversions of string to number.
 REPLACE_DICT = {'Very Low': 0, 'Low': 1, 'Moderate': 2, 'High': 3, 'Very High': 4}
 
-# REPLACE_RAW_DICT = {
-#     'ed_prxece': 'r_ed_prxece',
-#     'ed_prxhqece': 'r_ed_prxhqece',
-#     'ed_ecenrol': 'r_ed_ecenrol',
-#     'ed_reading': 'r_ed_reading',
-#     'ed_math': 'r_ed_math',
-#     'ed_hsgrad': 'r_ed_hsgrad',
-#     'ed_apenr': 'r_ed_apenr',
-#     'ed_college': 'r_ed_college',
-#     'ed_schpov': 'r_ed_schpov',
-#     'ed_teachxp':'r_ed_teachxp',
-#     'ed_attain': 'r_ed_attain',
-#     'he_food':'r_he_food',
-#     'he_green': 'r_he_green',
-#     'he_walk': 'r_he_walk',
-#     'he_vacancy': 'r_he_vacancy',
-#     'he_suprfnd': 'r_he_suprfnd',
-#     'he_rsei': 'r_he_rsei',
-#     'he_pm25': 'r_he_pm25',
-#     'he_ozone': 'r_he_ozone',
-#     'he_heat': 'r_he_heat',
-#     'he_hlthins': 'r_he_hlthins',
-#     'se_emprat': 'r_se_emprat',
-#     'se_jobprox': 'r_se_jobprox',
-#     'se_povrate': 'r_se_povrate',
-#     'se_public': 'r_se_public',
-#     'se_home': 'r_se_home',
-#     'se_occ': 'r_se_occ',
-#     'se_mhe': 'r_se_mhe',
-#     'se_single': 'r_se_single'
-# }
-
 # Replace to shorten column headers and keep json small.
 SEARCH_AND_REPLACE = {
     'geoid': 'GEOID',

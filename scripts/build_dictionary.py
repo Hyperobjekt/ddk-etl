@@ -39,7 +39,7 @@ for shape in shapetypes:
             if (csv == 'pop'):
                 # Remove the first several lines.
                 source = source.drop(columns=['Add to dot density layer'])
-                source = source.drop([0,1,2,3,4,5,6,7,8,9])
+                source = source.drop(source.index[0:7])
             else:
                 if (csv == 'index'):
                     source.rename(columns={'Choropleth map': 'ch'}, inplace=True)

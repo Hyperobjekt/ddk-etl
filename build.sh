@@ -72,6 +72,13 @@ if [ ! -z $SHOULD_BUILD ]; then
       python3 ./scripts/build_dictionary.py $SHOULD_BUILD $DEBUG
     fi
     
+    if [ ! -z $SHOULD_BARCHART ]; then
+      # Generate barchart data.
+      echo "Building dictionary data into string set."
+      # ex: python3 ./scripts/build_dictionary.py tracts 1
+      python3 ./scripts/process_barchart_data.py $DEBUG
+    fi
+    
     # Merge data with geojson.
     # ex: bash ./scripts/join_geojson.sh tracts 1
     bash ./scripts/join_geojson.sh $SHOULD_BUILD $DEBUG
@@ -97,7 +104,10 @@ if [ ! -z $SHOULD_BUILD ]; then
         tree ./geojson
       fi
       # Deploy files into the appropriate version directory.
-      aws s3 cp --recursive ./proc s3://ddk-source/proc/${DATA_VERSION}/ --acl=public-read
+      aws s3 cp --recursive ./proc s3://ddk-source/proc/${DATA_VERSION}/ \
+       --acl=public-read \
+       --region=us-east-1 \
+		   --cache-control max-age=2628000
     fi
 
 fi

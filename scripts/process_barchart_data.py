@@ -6,6 +6,7 @@ import json
 from constants import *
 
 print("Processing bar chart data...")
+debug = bool(sys.argv[1])
 
 SOURCE_DIR = './source'
 OUTPUT_DIR = './proc'
