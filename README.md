@@ -34,3 +34,25 @@ docker run --env-file .env hyperobjekt/ddk-etl
 
 - Add docker image to dockerhub
 - Setup AWS Batch (or other container service) to automatically build on source changes
+
+### Configuration
+
+Configure the pipeline using the `.env` file: 
+
+```
+RAW_DATA_PATH=https://... # Path to source data files on github (or elsewhere avail to curl)
+DATA_BUCKET=ddk-source # AWS bucket
+AWS_ACCESS_ID=... # AWS Access ID
+AWS_SECRET_KEY=... # AWS Secret Key
+MAPBOX_USERNAME=... # Mapbox username
+MAPBOX_TOKEN=... # Mapbox token
+DATA_VERSION=1.0.0 # Data version (fetched from github repo tags when writing .env), use semantic versioning
+DEBUG=1 # Boolean
+DEPLOY=0 # Boolean, cp processed files to AWS S3 bucket, disable for faster testing.
+CLEAN=1 # Clean up before starting. Use if you're testing scripts locally.
+BUILD_GEOJSON=0 # Boolean. Build geojson from census data? Don't need to do this every time.
+BUILD_TYPES=tracts,states # Comma-delineated string of shape types to download and process
+BUILD_DICT=1 # Build dictionary files? 
+BUILD_METRO_LIST=1 # Build list of featured metros? 
+BAR_CHARTS=1 # Process bar charts data?
+```

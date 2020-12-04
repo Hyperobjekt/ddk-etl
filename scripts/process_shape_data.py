@@ -10,6 +10,8 @@ shapetypes = sys.argv[1].split(',') # Shape types to process: `tracts`, `countie
 print("shapetype array = ", shapetypes)
 build_metro = bool(sys.argv[2])
 
+debug = bool(sys.argv[3])
+
 SOURCE_DIR = './source'
 OUTPUT_DIR = './proc'
 # print('source dir is ', SOURCE_DIR)
@@ -28,6 +30,7 @@ if not os.path.exists(f'{OUTPUT_DIR}/helpers'):
 
 # For each file in the array...
 for shape in shapetypes:
+    shape_all = pd.DataFrame()
     for csv in csvs_arr:
         print(f'Processing {csv}.')
         # plot.savefig(f'hanning{num}.pdf')
@@ -45,22 +48,37 @@ for shape in shapetypes:
             # zscores, replace "z" with "z_"
             if (csv == 'zscores'):
                 source.columns = source.columns.str.replace('z', 'z_')
-                print('Prefixed zscores columns.')
-                print(source.head())
+                # print('Prefixed zscores columns.')
+                # print(source.head())
             # raw, prefix with "r_"
             if (csv == 'raw'):
-                source = source.rename(columns=REPLACE_RAW_DICT)
-                print('Prefixed raw columns.')
+                # Preface all columns in raw with an _r
+                new_cols = list(source.columns)
+                for i, val in enumerate(new_cols, start=0):
+                  if i > 8:
+                    new_cols[i] = 'r_' + val
+                source.columns = new_cols
+                print('Prefixed raw columns')
                 print(source.head())
             # Replace categorical strings in each categorical column with numbers.
             if (csv == 'index'):
                 print('Processing categorical columns...')
                 source[LONG_STRING_COLS] = source[LONG_STRING_COLS].replace(REPLACE_DICT, inplace=False)
                 print(source[LONG_STRING_COLS].head())
-
+                new_cols = list(source.columns)
+                for i, val in enumerate(new_cols, start=0):
+                  if i > 8:
+                    new_cols[i] = 'x_' + val
+                source.columns = new_cols
+                print('Prefixed index columns')
+                print(source.head())
+            source["geoid"] = "0" + source["geoid"].astype(str)
+            print('Prefixed geoid column.')
+            print(source.head())
             # Replace to shorten column headers and keep json small.  
             for key, value in SEARCH_AND_REPLACE.items():
               source.columns = source.columns.str.replace(str(key), str(value))
+            source = source.sort_values(by=['GEOID'])
             print(source.head())
             
             # Split out 2010 data.
@@ -70,7 +88,7 @@ for shape in shapetypes:
             pre10 = source10.iloc[:, [0,2,3,4,5,6,7]]
             
             # Isolate data columns and rename with '10' suffix.
-            data10 = source10.iloc[:, 8:300].add_suffix("_10")
+            data10 = source10.iloc[:, 8:].add_suffix("_10")
             
             # Join renamed.
             proc10 = pre10.join(data10)
@@ -86,7 +104,7 @@ for shape in shapetypes:
             pre15 = source15.iloc[:, [0,2,3,4,5,6,7]]
 
             # Isolate data columns and rename with '15' suffix.
-            data15 = source15.iloc[:, 8:300].add_suffix("_15")
+            data15 = source15.iloc[:, 8:].add_suffix("_15")
             
             # Join renamed.
             proc15 = pre15.join(data15)
@@ -98,13 +116,9 @@ for shape in shapetypes:
             # print('proc')
             # print(proc.iloc[:,20:40].head())
             # Create shape dir if not exists.
-            if not os.path.exists(f'{OUTPUT_DIR}/{shape}'):
-                os.mkdir(f'{OUTPUT_DIR}/{shape}')
+            # if not os.path.exists(f'{OUTPUT_DIR}/{shape}'):
+            #     os.mkdir(f'{OUTPUT_DIR}/{shape}')
 
-            # Save each merged dataframe to a new directory for the processed files..
-            proc.to_csv(OUTPUT_DIR + '/' + shape + '/' + csv + '.csv', index=False)
-            proc.to_json(OUTPUT_DIR + '/' + shape + '/' + csv + '.json', 'records')
-            
             # Export a list of metro areas plus codes.
             if (csv == 'index'):
                 if (build_metro == True):
@@ -117,5 +131,20 @@ for shape in shapetypes:
                     metros.to_csv(OUTPUT_DIR + '/helpers/metros.csv', index=False)
                     metros.to_json(OUTPUT_DIR + '/helpers/metros.json', 'records')
             
+            # Remove verbose metro title after all other gen work done.
+            proc = proc.drop('msaname15', 1)
+
+            # Combine all processed csvs into a single dataframe for export.
+            print("Is shape_all empty? " + str(shape_all.empty))
+            if shape_all.empty == True:
+              shape_all = proc
+            else:
+              shape_all = shape_all.merge(proc)
+            print('shape_all')
+            print(shape_all.head())
         else:
             print(f'File at {path} doesn\'t seem to exist!')
+    
+    # Write combined dataframe for all included CSV files to CSV and JSON files.
+    shape_all.to_csv(f'{OUTPUT_DIR}/{shape}.csv', index=False)
+    shape_all.to_json(f'{OUTPUT_DIR}/{shape}.json', 'records')

@@ -8,6 +8,7 @@ print("Building dictionary...")
 
 shapetypes = sys.argv[1].split(',') # Shape types to process: `tracts`, `counties`, `states`, or `zips`.
 print("shapetype array = ", shapetypes)
+debug = sys.argv[2]
 
 SOURCE_DIR = './source'
 OUTPUT_DIR = './proc'
@@ -43,6 +44,7 @@ for shape in shapetypes:
                 if (csv == 'index'):
                     source.rename(columns={'Choropleth map': 'ch'}, inplace=True)
                     source = source[['column', 'type', 'label', 'description', 'ch']]
+                    source['column'] = 'x_' + source['column'].astype(str)
                     # print(source.head())
                 else:
                     if (csv == 'zscores'):

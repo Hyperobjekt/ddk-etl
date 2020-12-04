@@ -11,6 +11,8 @@ data_path=$1
 shape_types=(`echo $2 | tr ',' ' '`)
 # Whether or not to fetch bar chart data.
 bar_charts=$3
+# Are we debugging?
+debug=$4
 
 # Array of files to fetch for map data.
 csv_types=( index raw pop zscores )
@@ -34,13 +36,15 @@ do
     then
       if [ ! -d "${shape}" ]
       then
-        mkdir "${shape}"
+        mkdir -p "${shape}"
       fi
       curl "${data_path}/${shape}/${csv}/${csv}.csv" -o "${shape}/${csv}.csv" 
       if [ -e "${shape}/${csv}.csv" ]
       then
-        ls -la ${shape}
-        head -n 5 "${shape}/${csv}.csv"
+        if [[ $DEBUG -eq 1 ]]; then
+          ls -la ${shape}
+          head -n 5 "${shape}/${csv}.csv"
+        fi
         echo "Downloaded ${shape} file ${csv}.csv."
       fi
     else
@@ -57,8 +61,10 @@ do
       curl "${data_path}/${shape}/${csv}/dictionary.csv" -o "${shape}/${csv}_dict.csv" 
       if [ -e "${shape}/${csv}_dict.csv" ]
       then
-        ls -la ${shape}
-        head -n 5 "${shape}/${csv}_dict.csv"
+        if [[ $DEBUG -eq 1 ]]; then
+          ls -la ${shape}
+          head -n 5 "${shape}/${csv}_dict.csv"
+        fi
         echo "Downloaded ${shape} dictionary file ${csv}_dict.csv."
       fi
     else
@@ -80,12 +86,13 @@ then
       then
         if [ ! -d barcharts ]
           then
-            mkdir barcharts
-            ls
+            mkdir -p barcharts
         fi
         curl "${data_path}/barcharts/${csv}.csv" -o "barcharts/${csv}.csv"
-        ls -la barcharts
-        head -n 5 "barcharts/${csv}.csv"
+        if [[ $DEBUG -eq 1 ]]; then
+          ls -la barcharts
+          head -n 5 "barcharts/${csv}.csv"
+        fi
         echo "Downloaded barcharts file ${csv}.csv."
       else
         echo "Unable to download barcharts/${csv}.csv."
