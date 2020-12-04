@@ -70,13 +70,16 @@ for csv in chart_data_arr:
         source.columns = source.columns.str.lower()
         # For each file:
         # Rename columns
-        source.rename(columns=REPLACE_COLS_DICT, inplace=True)
+        for key, value in SEARCH_AND_REPLACE.items():
+          source.columns = source.columns.str.replace(str(key), str(value))
+        print(f'Ran csv {csv} through search and replace:')
+        print(source.head())
         # Replace strings in High/Low/etc column
         source['grp'] = source['grp'].replace(REPLACE_DICT, inplace=False)
         # Sort by msaname and then by grp.
         if (csv == 'msaname15'):
             source = pd.merge(source, metros, left_on="msaname15", right_on="msaname15")
-            source = source[['msaid15', 'grp', 'year', 'as', 'ap', 'b', 'hi', 'w']]
+            source = source[['msaid15', 'grp', 'year', 'ai', 'ap', 'b', 'hi', 'w']]
             source = source.sort_values(by=['year', 'msaid15', 'grp'])
             # Also write the data to a dict that will be exported as JSON.
             dict = source.to_dict('records')
@@ -85,7 +88,7 @@ for csv in chart_data_arr:
                 id = item.get('msaid15')
                 result[year]['metros'][id].append(item)
         if (csv == 'nation'):
-            source = source[['grp', 'year', 'as', 'ap', 'b', 'hi', 'w']]
+            source = source[['grp', 'year', 'ai', 'ap', 'b', 'hi', 'w']]
             source = source.sort_values(by=['year', 'grp'])
             # Also write the data to a dict that will be exported as JSON.
             dict = source.to_dict('records')
@@ -99,12 +102,12 @@ for csv in chart_data_arr:
             for item in dict:
                 year = str(item.get('year'))
                 result[year]['states'][item['stateusps']].append(item)
-        
+
         # Save each merged dataframe to a new directory for the processed files..
         source.to_csv(OUTPUT_DIR + '/barcharts/' + csv + '.csv', index=False)
         source.to_json(OUTPUT_DIR + '/barcharts/' + csv + '.json', 'records')
     else:
         print(f'File at {path} doesn\'t seem to exist!')
-# Also write total 
+# Also write total
 with open(OUTPUT_DIR + '/barcharts/barcharts.json','w') as f:
     json.dump(result,f)

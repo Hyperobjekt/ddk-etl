@@ -7,9 +7,9 @@ REPLACE_DICT = {'Very Low': 0, 'Low': 1, 'Moderate': 2, 'High': 3, 'Very High': 
 SEARCH_AND_REPLACE = {
     'geoid': 'GEOID',
     # Demographic
-    'aian': 'as', # Asian
+    'aian': 'ai', # American Indian or Native Alaskan, add to dot density
     'black': 'b', 
-    'api': 'ap', # Asian/Pacific Islander
+    'api': 'ap', # Asian/Pacific Islander, add to dot density
     'hisp': 'hi',
     'other2': 'o2',
     'nonwhite': 'nw',

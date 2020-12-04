@@ -1,6 +1,7 @@
 import os
 import sys
 import pandas as pd
+import json
 
 from constants import *
 
@@ -37,7 +38,7 @@ for shape in shapetypes:
             source = pd.read_csv(path)
             # print(source.head())
             if (csv == 'pop'):
-                # Remove the first several lines.
+                # Remove extraneous column and the first several lines.
                 source = source.drop(columns=['Add to dot density layer'])
                 source = source.drop(source.index[0:7])
             else:
@@ -69,10 +70,21 @@ for shape in shapetypes:
         else:
             print(f'File at {path} doesn\'t seem to exist!')
 
-# Replace to shorten column headers and keep json small.  
+# Replace to shorten column headers and keep json small.
 for key, value in SEARCH_AND_REPLACE.items():
   dictionary['column'] = dictionary['column'].str.replace(str(key), str(value))
 # print(source.head())
 
-dictionary.to_csv(OUTPUT_DIR + '/helpers/dictionary.csv', index=False)            
+# Build a simple object that lists the variables and their labels and descriptions
+# that can be merged into the i18n us_EN lang object in the app.
+en_US = {}
+dict = dictionary.to_dict('records')
+for item in dict:
+    en_US[item['column']] = item['label']
+    en_US[f"{item['column']}_desc"] = item['description']
+# Also write total
+with open(OUTPUT_DIR + '/helpers/en_US.json','w') as f:
+    json.dump(en_US,f)
+
+dictionary.to_csv(OUTPUT_DIR + '/helpers/dictionary.csv', index=False)
 dictionary.to_json(OUTPUT_DIR + '/helpers/dictionary.json', 'records')

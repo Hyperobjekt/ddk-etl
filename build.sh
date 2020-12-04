@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Fetch environment values.
-# Should the data be deployed? 
+# Should the data be deployed?
 SHOULD_DEPLOY=$(if [ "${DEPLOY}" -eq 1 ]; then echo 1; else echo 0; fi)
 # Clean up? Boolean.
 SHOULD_CLEAN=$(if [ "${CLEAN}" -eq 1 ]; then echo 1; else echo 0; fi)
@@ -46,24 +46,24 @@ aws configure set default.region us-east-1
 
 # Fetch tract source data.
 if [ ! -z $SHOULD_BUILD ]; then
-  
+
     # Fetch source geojson.
     echo "Fetching source geojson."
     if [[ $SHOULD_GEOJSON -eq 1 ]]; then
       # If deploy, upload files.
       make -f ./scripts/fetch_geo.mk all deploy
     fi
-    
+
     echo "Downloading processed geojson."
     # No deploy, just download, unzip, and make geojson.
     bash ./scripts/fetch_proc_geojson.sh $SHOULD_BUILD $DEBUG
-  
+
     echo "Fetching tract source data."
     bash ./scripts/fetch_raw_data.sh ${RAW_DATA_PATH} $SHOULD_BUILD $SHOULD_BARCHART $DEBUG
-    
+
     echo "Preparing source data."
     python3 ./scripts/process_shape_data.py $SHOULD_BUILD $SHOULD_METRO $DEBUG
-    
+
     # If dictionary files need to be rebuild, do that too.
     if [ ! -z $SHOULD_DICT ]; then
       # Build dictionary string set.
@@ -71,27 +71,27 @@ if [ ! -z $SHOULD_BUILD ]; then
       # ex: python3 ./scripts/build_dictionary.py tracts 1
       python3 ./scripts/build_dictionary.py $SHOULD_BUILD $DEBUG
     fi
-    
+
     if [ ! -z $SHOULD_BARCHART ]; then
       # Generate barchart data.
       echo "Building dictionary data into string set."
-      # ex: python3 ./scripts/build_dictionary.py tracts 1
+      # ex: python3 ./scripts/process_barchart_data.py 1
       python3 ./scripts/process_barchart_data.py $DEBUG
     fi
-    
+
     # Merge data with geojson.
     # ex: bash ./scripts/join_geojson.sh tracts 1
     bash ./scripts/join_geojson.sh $SHOULD_BUILD $DEBUG
-    
+
     # Generate points for population data.
     # TODO: Probably a node task using turf.js.
     # Get tract bounding box.
     # Generate random points w/in tract bounding box.
     # Drop random point if it's not within the tract polygon.
-    
+
     # Build tilesets.
     bash ./scripts/build_tilesets.sh $SHOULD_BUILD $DEBUG
-    
+
     # Deploy the data that was built.
     if [[ $SHOULD_DEPLOY -eq 1 ]]; then
       if [[ $DEBUG -eq 1 ]]; then
