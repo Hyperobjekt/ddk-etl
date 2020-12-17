@@ -5,6 +5,9 @@ import json
 
 from constants import *
 
+# To run locally:
+# python3 ./scripts/process_barchart_data.py 1
+
 print("Processing bar chart data...")
 debug = bool(sys.argv[1])
 

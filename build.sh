@@ -61,13 +61,13 @@ if [ ! -z $SHOULD_BUILD ]; then
     echo "Fetching tract source data."
     bash ./scripts/fetch_raw_data.sh ${RAW_DATA_PATH} $SHOULD_BUILD $SHOULD_BARCHART $DEBUG
 
+    echo "Preparing source data."
+    python3 ./scripts/process_shape_data.py $SHOULD_BUILD $SHOULD_METRO $DEBUG
+
     # Build dictionary string set.
     echo "Building dictionary data into string set."
     # ex: python3 ./scripts/build_dictionary.py tracts 1
     python3 ./scripts/build_dictionary.py $SHOULD_BUILD $DEBUG
-
-    echo "Preparing source data."
-    python3 ./scripts/process_shape_data.py $SHOULD_BUILD $SHOULD_METRO $DEBUG
 
 
 

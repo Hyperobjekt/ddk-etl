@@ -14,9 +14,6 @@ shapetypes = sys.argv[1].split(',') # Shape types to process: `tracts`, `countie
 print("shapetype array = ", shapetypes)
 debug = sys.argv[2]
 
-SOURCE_DIR = './source'
-OUTPUT_DIR = './proc'
-
 # Get list of files.
 csvs_arr = ['index', 'pop', 'raw', 'zscores'] # shapetypes # os.listdir(SOURCE_DIR)
 
@@ -87,6 +84,16 @@ dict = dictionary.to_dict('records')
 for item in dict:
     en_US[item['column']] = item['label']
     en_US[f"{item['column']}_desc"] = item['description']
+# Add state names
+states = pd.read_csv(f'{OUTPUT_DIR}/{STATES_PROC}.csv')
+states = states.to_dict('records')
+for item in states:
+  en_US[item['usps']] = item['name']
+# Source file for metro data.
+metros = pd.read_csv(f'{OUTPUT_DIR}/{METROS_PROC}.csv')
+metros = metros.to_dict('records')
+for item in metros:
+  en_US[item['msaid15']] = item['msaname15']
 # Also write total
 with open(OUTPUT_DIR + '/helpers/en_US.json','w') as f:
     json.dump(en_US,f)
