@@ -133,6 +133,7 @@ for shape in shapetypes:
                       # Add a column for whether it's a dual-state metro area.
                       metros['dual_st'] = metros['msaname15'].str.contains(',\s[A-Z]{2}-[A-Z]{2}', regex=True)
                       metros['dual_st'] = metros['dual_st'].fillna(0).astype(int)
+                      source.rename(columns={'msaid16': 'GEOID'}, inplace=True)
                       metros = metros.dropna(axis=0)
                       # print('metros')
                       # print(metros.head())

@@ -93,7 +93,7 @@ for item in states:
 metros = pd.read_csv(f'{OUTPUT_DIR}/{METROS_PROC}.csv')
 metros = metros.to_dict('records')
 for item in metros:
-  en_US[item['msaid15']] = item['msaname15']
+  en_US[item['GEOID']] = item['msaname15']
 # Also write total
 with open(OUTPUT_DIR + '/helpers/en_US.json','w') as f:
     json.dump(en_US,f)

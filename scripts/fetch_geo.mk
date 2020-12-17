@@ -6,14 +6,16 @@ tracts-pattern = gz_*_*_140_*_500k.zip
 cities-pattern = gz_*_*_160_*_500k.zip
 counties-pattern = gz_*_*_050_*_500k.zip
 states-pattern = gz_*_*_040_*_500k.zip
+metros-pattern = gz_*_*_310_*_500k.zip
 
 block-groups-geoid = "this.properties.GEOID = this.properties.STATE + this.properties.COUNTY + this.properties.TRACT + this.properties.BLKGRP"
 tracts-geoid = "this.properties.GEOID = this.properties.STATE + this.properties.COUNTY + this.properties.TRACT"
 cities-geoid = "this.properties.GEOID = this.properties.STATE + this.properties.PLACE"
 counties-geoid = "this.properties.GEOID = this.properties.STATE + this.properties.COUNTY"
 states-geoid =  "this.properties.GEOID = this.properties.STATE"
+metros-geoid =  "this.properties.GEOID = this.properties.CBSA"
 
-geo_types = tracts states cities
+geo_types = tracts states cities metros
 GENERATED_FILES = $(foreach t, $(geo_types), geojson/$(t).geojson)
 
 .PHONY: all deploy help
