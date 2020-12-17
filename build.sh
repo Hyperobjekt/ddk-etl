@@ -14,7 +14,7 @@ SHOULD_BUILD=$(if [ ! -z "${BUILD_TYPES}" ]; then echo "${BUILD_TYPES}"; else ec
 # Whether or not to fetch and process bar chart data. Boolean.
 SHOULD_BARCHART=$(if [ ! -z "${BAR_CHARTS}" ]; then echo "${BAR_CHARTS}"; else echo 1; fi)
 # Build dictionaries list of strings. Boolean.
-SHOULD_DICT=$(if [ ! -z "${BUILD_DICT}" ]; then echo "${BUILD_DICT}"; else echo 0; fi)
+# SHOULD_DICT=$(if [ ! -z "${BUILD_DICT}" ]; then echo "${BUILD_DICT}"; else echo 0; fi)
 # Build metro list. Boolean.
 SHOULD_METRO=$(if [ ! -z "${BUILD_METRO_LIST}" ]; then echo "${BUILD_METRO_LIST}"; else echo 0; fi)
 
@@ -61,16 +61,23 @@ if [ ! -z $SHOULD_BUILD ]; then
     echo "Fetching tract source data."
     bash ./scripts/fetch_raw_data.sh ${RAW_DATA_PATH} $SHOULD_BUILD $SHOULD_BARCHART $DEBUG
 
+    # Build dictionary string set.
+    echo "Building dictionary data into string set."
+    # ex: python3 ./scripts/build_dictionary.py tracts 1
+    python3 ./scripts/build_dictionary.py $SHOULD_BUILD $DEBUG
+
     echo "Preparing source data."
     python3 ./scripts/process_shape_data.py $SHOULD_BUILD $SHOULD_METRO $DEBUG
 
+
+
     # If dictionary files need to be rebuild, do that too.
-    if [ ! -z $SHOULD_DICT ]; then
-      # Build dictionary string set.
-      echo "Building dictionary data into string set."
-      # ex: python3 ./scripts/build_dictionary.py tracts 1
-      python3 ./scripts/build_dictionary.py $SHOULD_BUILD $DEBUG
-    fi
+    # if [ ! -z $SHOULD_DICT ]; then
+    #   # Build dictionary string set.
+    #   echo "Building dictionary data into string set."
+    #   # ex: python3 ./scripts/build_dictionary.py tracts 1
+    #   python3 ./scripts/build_dictionary.py $SHOULD_BUILD $DEBUG
+    # fi
 
     if [ ! -z $SHOULD_BARCHART ]; then
       # Generate barchart data.

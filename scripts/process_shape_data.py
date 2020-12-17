@@ -6,6 +6,9 @@ from constants import *
 
 print("Processing source shape data...")
 
+# To run locally:
+# python3 ./scripts/process_shape_data.py tracts,states 1 1
+
 shapetypes = sys.argv[1].split(',') # Shape types to process: `tracts`, `counties`, `states`, or `zips`.
 print("shapetype array = ", shapetypes)
 build_metro = bool(sys.argv[2])
@@ -75,26 +78,26 @@ for shape in shapetypes:
             source["geoid"] = "0" + source["geoid"].astype(str)
             print('Prefixed geoid column.')
             print(source.head())
-            # Replace to shorten column headers and keep json small.  
+            # Replace to shorten column headers and keep json small.
             for key, value in SEARCH_AND_REPLACE.items():
               source.columns = source.columns.str.replace(str(key), str(value))
             source = source.sort_values(by=['GEOID'])
             print(source.head())
-            
+
             # Split out 2010 data.
             source10 = source[(source["year"] == 2010)]
-            
+
             # Isolate metadata columns.
             pre10 = source10.iloc[:, [0,2,3,4,5,6,7]]
-            
+
             # Isolate data columns and rename with '10' suffix.
             data10 = source10.iloc[:, 8:].add_suffix("_10")
-            
+
             # Join renamed.
             proc10 = pre10.join(data10)
             # print('proc10')
             # print(proc10.iloc[:,0:15].head())
-            
+
             # Split out 2015 data.
             source15 = source[source['year'] == 2015]
             # print('source15')
@@ -105,12 +108,12 @@ for shape in shapetypes:
 
             # Isolate data columns and rename with '15' suffix.
             data15 = source15.iloc[:, 8:].add_suffix("_15")
-            
+
             # Join renamed.
             proc15 = pre15.join(data15)
             # print('proc15')
             # print(proc15.iloc[:,0:15].head())
-            
+
             # Merge '10 and '15 dataframes.
             proc = proc10.merge(proc15)
             # print('proc')
@@ -125,12 +128,15 @@ for shape in shapetypes:
                     print('building metros')
                     metros = proc.loc[:, ['msaid15', 'msaname15', 'countyfips', 'statefips', 'stateusps', 'in100']]
                     metros = metros.drop_duplicates(subset=['msaid15'], keep='first')
+                    # Add a column for whether it's a dual-state metro area.
+                    metros['dual_st'] = metros['msaname15'].str.contains(',\s[A-Z]{2}-[A-Z]{2}', regex=True)
+                    metros['dual_st'] = metros['dual_st'].fillna(0).astype(int)
                     metros = metros.dropna(axis=0)
                     # print('metros')
                     # print(metros.head())
                     metros.to_csv(OUTPUT_DIR + '/helpers/metros.csv', index=False)
                     metros.to_json(OUTPUT_DIR + '/helpers/metros.json', 'records')
-            
+
             # Remove verbose metro title after all other gen work done.
             proc = proc.drop('msaname15', 1)
 
@@ -144,7 +150,7 @@ for shape in shapetypes:
             print(shape_all.head())
         else:
             print(f'File at {path} doesn\'t seem to exist!')
-    
+
     # Write combined dataframe for all included CSV files to CSV and JSON files.
     shape_all.to_csv(f'{OUTPUT_DIR}/{shape}.csv', index=False)
     shape_all.to_json(f'{OUTPUT_DIR}/{shape}.json', 'records')

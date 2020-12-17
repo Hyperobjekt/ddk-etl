@@ -3,6 +3,8 @@
 # This script fetches CSV data for each bucket passed in the second argument.
 # ARG 1 = Path to the repo where raw data resides.
 # ARG 2 = Comma-delineated list of subdirectories.
+# Test locally with:
+# bash ./scripts/fetch_raw_data.sh https://raw.githubusercontent.com/Hyperobjekt/ddk-data/deploy tracts,states 1 1
 
 echo 'Fetching raw data.'
 # Path to the source data.
@@ -18,8 +20,10 @@ debug=$4
 csv_types=( index raw pop zscores )
 # Array of files to fetch for bar chart data.
 bar_chart_types=( msaname15 nation stateusps )
+# Extra paths for extraneous sh** the client drops in.
+addl_paths=( 'states/StateFipsUsps.csv' )
 
-if [ ! -d source ]   # For file "if [ -f /home/rama/file ]"
+if [ ! -d source ]
 then
   mkdir source
 fi
@@ -28,6 +32,12 @@ cd source
 for shape in "${shape_types[@]}"
 do
   # echo "shape is ${shape}."
+  # If dir in source doesn't exist, mkdir.
+  if [ ! -d ${shape} ]
+  then
+    mkdir -p ${shape}
+  fi
+  # Iterate through CSV types.
   for csv in "${csv_types[@]}"
   do
     curl_status=`curl --silent --connect-timeout 8 --output /dev/null "${data_path}/${shape}/${csv}/${csv}.csv" -I -w "%{http_code}\n"`
@@ -38,7 +48,7 @@ do
       then
         mkdir -p "${shape}"
       fi
-      curl "${data_path}/${shape}/${csv}/${csv}.csv" -o "${shape}/${csv}.csv" 
+      curl "${data_path}/${shape}/${csv}/${csv}.csv" -o "${shape}/${csv}.csv"
       if [ -e "${shape}/${csv}.csv" ]
       then
         if [[ $DEBUG -eq 1 ]]; then
@@ -58,7 +68,7 @@ do
       then
         mkdir "${shape}"
       fi
-      curl "${data_path}/${shape}/${csv}/dictionary.csv" -o "${shape}/${csv}_dict.csv" 
+      curl "${data_path}/${shape}/${csv}/dictionary.csv" -o "${shape}/${csv}_dict.csv"
       if [ -e "${shape}/${csv}_dict.csv" ]
       then
         if [[ $DEBUG -eq 1 ]]; then
@@ -81,7 +91,7 @@ then
   do
     echo "csv is ${csv}."
     curl_status=`curl --silent --connect-timeout 8 --output /dev/null "${data_path}/barcharts/${csv}.csv" -I -w "%{http_code}\n"`
-    echo "curl_status = ${curl_status}." 
+    echo "curl_status = ${curl_status}."
     if [ ${curl_status} -eq 200 ]
       then
         if [ ! -d barcharts ]
@@ -99,3 +109,22 @@ then
     fi
   done
 fi
+
+# Fetch any additional files.
+for path in "${addl_paths[@]}"
+do
+  echo "addl path is ${path}."
+  curl_status=`curl --silent --connect-timeout 8 --output /dev/null "${data_path}/${path}" -I -w "%{http_code}\n"`
+  echo "curl_status = ${curl_status}."
+  if [ ${curl_status} -eq 200 ]
+    then
+      curl "${data_path}/${path}" -o ${path}
+      if [[ $DEBUG -eq 1 ]]; then
+        ls -la ${path}
+        head -n 5 ${path}
+      fi
+      echo "Downloaded barcharts file ${path}."
+    else
+      echo "Unable to download ${path}."
+  fi
+done

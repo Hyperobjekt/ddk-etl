@@ -5,6 +5,9 @@ import json
 
 from constants import *
 
+# Test locally with:
+# python3 ./scripts/build_dictionary.py tracts,states 1
+
 print("Building dictionary...")
 
 shapetypes = sys.argv[1].split(',') # Shape types to process: `tracts`, `counties`, `states`, or `zips`.
@@ -39,14 +42,16 @@ for shape in shapetypes:
             # print(source.head())
             if (csv == 'pop'):
                 # Remove extraneous column and the first several lines.
-                source = source.drop(columns=['Add to dot density layer'])
+                # source = source.drop(columns=['Add to dot density layer'])
                 source = source.drop(source.index[0:7])
             else:
                 if (csv == 'index'):
-                    source.rename(columns={'Choropleth map': 'ch'}, inplace=True)
-                    source = source[['column', 'type', 'label', 'description', 'ch']]
+                    # source.rename(columns={'Choropleth map': 'ch', 'Visualize on map': 'map'}, inplace=True)
+                    source.rename(columns={'Scale': 'scale', 'Visualize on map': 'map'}, inplace=True)
+                    source = source[['column', 'type', 'label', 'description', 'scale', 'map']]
                     source['column'] = 'x_' + source['column'].astype(str)
-                    # print(source.head())
+                    source['map'] = source['map'].replace(regex={r'[no|No]': 0, r'[yes|Yes]': 1})
+                    print(source.head())
                 else:
                     if (csv == 'zscores'):
                         source['column'] = source['column'].str.replace('z', 'z_')
@@ -60,7 +65,7 @@ for shape in shapetypes:
                         print('Prefixed raw column column.')
                         print(source.head())
                     source = source[['column', 'type', 'label', 'description']]
-                source = source.drop([0,1,2,3,4,5,6,7,8,9,10])
+                source = source.drop([0,1,2,3,4,5,6,7,8,9])
                 # print(source.head())
                 source['column'] = source['column'].str.lower()
                 # print(source.head())
