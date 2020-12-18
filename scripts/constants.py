@@ -4,14 +4,14 @@ OUTPUT_DIR = './proc'
 # Source file for states data to go on state shapes.
 STATES_SRC = 'StateFipsUsps'
 STATES_PROC = 'states'
+# Source file for metro data.
+METROS_PROC = 'metros'
 # Columns with categorical data that we will change from string to number.
 LONG_STRING_COLS = ['c5_ed_nat', 'c5_he_nat', 'c5_se_nat', 'c5_coi_nat', 'c5_ed_stt', 'c5_he_stt', 'c5_se_stt', 'c5_coi_stt', 'c5_ed_met', 'c5_he_met', 'c5_se_met', 'c5_coi_met']
 # Columns to include on tracts json to go into tilesset
 TRACT_GEOJSON_COLS = ['GEOID', 'in100', 'msaid15', 'countyfips', 'statefips', 'stateusps', 'pop_10', 'x_c5_e_n_10', 'x_c5_h_n_10', 'x_c5_o_n_10', 'x_c5_c_n_10', 'x_c5_e_s_10', 'x_c5_h_s_10', 'x_c5_o_s_10', 'x_c5_c_s_10', 'x_c5_e_m_10', 'x_c5_h_m_10', 'x_c5_o_m_10', 'x_c5_c_m_10', 'x_c5_e_n_15', 'x_c5_h_n_15', 'x_c5_o_n_15', 'x_c5_c_n_15', 'x_c5_e_s_15', 'x_c5_h_s_15', 'x_c5_o_s_15', 'x_c5_c_s_15', 'x_c5_e_m_15', 'x_c5_h_m_15', 'x_c5_o_m_15', 'x_c5_c_m_15']
 # Key for these conversions of string to number.
 REPLACE_DICT = {'Very Low': 0, 'Low': 1, 'Moderate': 2, 'High': 3, 'Very High': 4}
-# Source file for metro data.
-METROS_PROC = 'helpers/metros'
 # Replace to shorten column headers and keep json small.
 SEARCH_AND_REPLACE = {
     'geoid': 'GEOID',

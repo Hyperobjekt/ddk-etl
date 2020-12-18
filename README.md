@@ -26,6 +26,16 @@ e.g. `docker run hyperobjekt/ddk-etl`
 docker run --env-file .env hyperobjekt/ddk-etl
 ```
 
+## Other helpful Docker commands
+
+```
+# List containers
+docker container list
+
+# Prune images
+docker image prune -a
+```
+
 ### Flags
 
 - `--env-file` indicates the `.env` file to pass to Docker
@@ -37,7 +47,7 @@ docker run --env-file .env hyperobjekt/ddk-etl
 
 ### Configuration
 
-Configure the pipeline using the `.env` file: 
+Configure the pipeline using the `.env` file:
 
 ```
 RAW_DATA_PATH=https://... # Path to source data files on github (or elsewhere avail to curl)
@@ -52,7 +62,7 @@ DEPLOY=0 # Boolean, cp processed files to AWS S3 bucket, disable for faster test
 CLEAN=1 # Clean up before starting. Use if you're testing scripts locally.
 BUILD_GEOJSON=0 # Boolean. Build geojson from census data? Don't need to do this every time.
 BUILD_TYPES=tracts,states # Comma-delineated string of shape types to download and process
-BUILD_DICT=1 # Build dictionary files? 
-BUILD_METRO_LIST=1 # Build list of featured metros? 
+BUILD_DICT=1 # Build dictionary files?
+BUILD_METRO_LIST=1 # Build list of featured metros?
 BAR_CHARTS=1 # Process bar charts data?
 ```
