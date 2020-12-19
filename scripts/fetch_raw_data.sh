@@ -4,7 +4,7 @@
 # ARG 1 = Path to the repo where raw data resides.
 # ARG 2 = Comma-delineated list of subdirectories.
 # Test locally with:
-# bash ./scripts/fetch_raw_data.sh https://raw.githubusercontent.com/Hyperobjekt/ddk-data/deploy tracts,states 1 1
+# bash ./scripts/fetch_raw_data.sh https://raw.githubusercontent.com/Hyperobjekt/ddk-data/deploy tracts,states,metros 1 1
 
 echo 'Fetching raw data.'
 # Path to the source data.

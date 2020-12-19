@@ -22,16 +22,13 @@ the entire chain of scripts should be run from `./build.sh` so that running the 
 
 e.g. `docker run hyperobjekt/ddk-etl`
 
-```
+```bash
+# Build
+docker build -t hyperobjekt/ddk-etl .
+# Run
 docker run --env-file .env hyperobjekt/ddk-etl
-```
-
-## Other helpful Docker commands
-
-```
 # List containers
 docker container list
-
 # Prune images
 docker image prune -a
 ```

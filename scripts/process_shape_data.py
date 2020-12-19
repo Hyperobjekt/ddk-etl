@@ -133,10 +133,12 @@ for shape in shapetypes:
                       # Add a column for whether it's a dual-state metro area.
                       metros['dual_st'] = metros['msaname15'].str.contains(',\s[A-Z]{2}-[A-Z]{2}', regex=True)
                       metros['dual_st'] = metros['dual_st'].fillna(0).astype(int)
-                      source.rename(columns={'msaid16': 'GEOID'}, inplace=True)
+                      metros.rename(columns={'msaid15': 'GEOID'}, inplace=True)
+                      metros['GEOID'] = metros['GEOID'].astype(str)
                       metros = metros.dropna(axis=0)
-                      # print('metros')
-                      # print(metros.head())
+                      metros = metros.sort_values(by=['GEOID'])
+                      print('metros')
+                      print(metros.head())
                       metros.to_csv(OUTPUT_DIR + '/' + METROS_PROC + '.csv', index=False)
                       metros.to_json(OUTPUT_DIR + '/' + METROS_PROC + '.json', 'records')
 
@@ -153,18 +155,15 @@ for shape in shapetypes:
               print(shape_all.head())
           else:
               print(f'File at {path} doesn\'t seem to exist!')
-
-      # If shape is tracts, write an limited set to go on tiles.
-      dict_path = f'{SOURCE_DIR}/{shape}/index_dict.csv'
-      if os.path.exists(path):
+      if shape_all.empty != True:
+        # If shape is tracts, write an limited set to go on tiles.
         tracts = shape_all[TRACT_GEOJSON_COLS]
         tracts.to_csv(f'{OUTPUT_DIR}/tracts.csv', index=False)
         tracts.to_json(f'{OUTPUT_DIR}/tracts.json', 'records')
-      else:
-        print('Not able to access index_dict to determine values to store.')
-      # Write combined dataframe for all included CSV files to CSV and JSON files.
-      shape_all.to_csv(f'{OUTPUT_DIR}/{shape}-all.csv', index=False)
-      shape_all.to_json(f'{OUTPUT_DIR}/{shape}-all.json', 'records')
+
+        # Also write combined dataframe for all included CSV files to CSV and JSON files.
+        shape_all.to_csv(f'{OUTPUT_DIR}/{shape}-all-data.csv', index=False)
+        shape_all.to_json(f'{OUTPUT_DIR}/{shape}-all-data.json', 'records')
 
     if (shape == 'states'):
       path = f'{SOURCE_DIR}/{shape}/{states_src}.csv'
@@ -175,5 +174,11 @@ for shape in shapetypes:
         source = pd.read_csv(path)
         # Make all columns lowercase.
         source.columns = source.columns.str.lower()
+        source['GEOID'] = source['fips'].astype(str)
+        source['GEOID'] = source['GEOID'].str.rjust(2, '0')
+        source = source[['GEOID', 'name', 'fips', 'usps']]
+        source = source.sort_values(by=['GEOID'])
+        print('state source')
+        print(source.head())
         source.to_csv(f'{OUTPUT_DIR}/{shape}.csv', index=False)
         source.to_json(f'{OUTPUT_DIR}/{shape}.json', 'records')

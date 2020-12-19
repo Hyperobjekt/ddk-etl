@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# To run locally:
+# bash ./scripts/join_geojson.sh tracts,states,metros 1
+
 # Merges processed data with geojson.
 echo 'join_geojson.sh'
 
@@ -35,13 +38,13 @@ do
   tippecanoe-json-tool -pe -w -c "${OUTPUT_DIR}/${shape}.csv" "${SOURCE_DIR}/geojson/${shape}.sort.geojson" > "${OUTPUT_DIR}/geojson/${shape}.geojson"
   if [[ $debug -eq 1 ]]; then
     echo "========== Joined GeoJSON for ${shape}."
-    head -10 "${OUTPUT_DIR}/geojson/${shape}.geojson"
+    head -2 "${OUTPUT_DIR}/geojson/${shape}.geojson"
   fi
 done
 
 echo "Done merging csv into geojson."
 if [[ $debug -eq 1 ]]; then
-  head -10 "${OUTPUT_DIR}/geojson/${shape}.geojson"
+  # head -2 "${OUTPUT_DIR}/geojson/${shape}.geojson"
   tree "./${SOURCE_DIR}"
   tree "./${OUTPUT_DIR}"
 fi
