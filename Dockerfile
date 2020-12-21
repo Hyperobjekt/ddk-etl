@@ -43,7 +43,7 @@ ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
 RUN node --version
 RUN npm --version
 
-RUN npm install -g mapshaper csv2geojson
+RUN npm install -g mapshaper csv2geojson @turf/turf JSONStream event-stream
 
 COPY . /app
 WORKDIR /app/

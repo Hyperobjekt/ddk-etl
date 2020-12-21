@@ -7,7 +7,7 @@ from constants import *
 print("Processing source shape data...")
 
 # To run locally:
-# python3 ./scripts/process_shape_data.py tracts,states 1 1
+# python3 ./scripts/process_shape_data.py tracts,states,metros 1 1
 
 shapetypes = sys.argv[1].split(',') # Shape types to process: `tracts`, `counties`, `states`, or `zips`.
 print("shapetype array = ", shapetypes)
@@ -90,10 +90,10 @@ for shape in shapetypes:
               source10 = source[(source["year"] == 2010)]
 
               # Isolate metadata columns.
-              pre10 = source10.iloc[:, [0,2,3,4,5,6,7]]
+              pre10 = source10.iloc[:, [0,2,3,4,5,6,7,8]]
 
               # Isolate data columns and rename with '10' suffix.
-              data10 = source10.iloc[:, 8:].add_suffix("_10")
+              data10 = source10.iloc[:, 9:].add_suffix("_10")
 
               # Join renamed.
               proc10 = pre10.join(data10)
@@ -141,6 +141,16 @@ for shape in shapetypes:
                       print(metros.head())
                       metros.to_csv(OUTPUT_DIR + '/' + METROS_PROC + '.csv', index=False)
                       metros.to_json(OUTPUT_DIR + '/' + METROS_PROC + '.json', 'records')
+
+              # Export population data for use building points.
+              if (csv == 'pop'):
+                  print('building pop data')
+                  pop = proc.loc[:, POP_COLS]
+                  pop = pop.sort_values(by=['GEOID'])
+                  print('pop')
+                  print(pop.head())
+                  pop.to_csv(OUTPUT_DIR + '/' + csv + '.csv', index=False)
+                  pop.to_json(OUTPUT_DIR + '/' + csv + '.json', 'records')
 
               # Remove verbose metro title after all other gen work done.
               proc = proc.drop('msaname15', 1)

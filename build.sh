@@ -91,10 +91,7 @@ if [ ! -z $SHOULD_BUILD ]; then
     bash ./scripts/join_geojson.sh $SHOULD_BUILD $DEBUG
 
     # Generate points for population data.
-    # TODO: Probably a node task using turf.js.
-    # Get tract bounding box.
-    # Generate random points w/in tract bounding box.
-    # Drop random point if it's not within the tract polygon.
+    nodejs ./scripts/generate_points.js
 
     # Build tilesets.
     bash ./scripts/build_tilesets.sh $SHOULD_BUILD $DEBUG
