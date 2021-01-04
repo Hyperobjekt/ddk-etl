@@ -1,32 +1,47 @@
 #!/bin/bash
-echo 'build_tilesets.sh'
+echo './scripts/generate_tilesets.sh'
 
 # To test locally:
 # bash ./scripts/build_tilesets.sh tracts,states,metros $MAPBOX_USER $MAPBOX_TOKEN 1.0.0 1
 
 # Get types of shapes to fetch based on argument.
 shape_types=(`echo $1 | tr ',' ' '`)
-# Mapbox user
-user=$2
-echo "User is ${user}."
-# Mapbox token
-token=$3
 # Data version
-version=$4
+version=$2
 # Are we debugging?
-debug=$5
+debug=$3
 
 # Types of points (as sources)
 point_types=( ai ap b hi w )
 # Types of point years (for sources)
 years=( 10 15 )
+# Max and min zoom
+min_zoom=3
+max_zoom=14
+
+
+# Source dir
+SOURCE_DIR="source"
+# Processed data dir
+OUTPUT_DIR="proc"
+
+if [ ! -d "./mbtiles" ]
+then
+  mkdir -p "./mbtiles"
+fi
 
 # Build tilesets for shapes.
+shapes_list=""
 for shape in "${shape_types[@]}"
 do
-  echo "Uploading source for ${shape}."
-  tilesets upload-source "${user}" "${shape}_${version}"  "${OUTPUT_DIR}/geojson/${shape}.geojson" --token ${token} --replace
+  echo "Creating tileset for ${shape}."
+  tippecanoe "--maximum-zoom=${max_zoom} --minimum-zoom=${min_zoom} -o ./mbtiles/${shape}.mbtiles -l ${shape} ./${OUTPUT_DIR}/geojson/${shape}.geojson"
+  shapes_list+="./mbtiles/${shape}.mbtiles"
+  # tilesets upload-source "${user}" "${shape}_${version}"  "${OUTPUT_DIR}/geojson/${shape}.geojson" --token ${token} --replace
 done
+
+# Merge all those tilesets.
+tile-join "-o ./mbtiles/shapes.mbtiles ${shapes_list}"
 
 # Build tilesets for points.
 for points in "${point_types[@]}"

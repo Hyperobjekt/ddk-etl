@@ -67,3 +67,11 @@ SEARCH_AND_REPLACE = {
     'stt': 's',
     'met': 'm',
 }
+
+# Point types for processing the point data.
+POINT_TYPES = ['ai', 'ap', 'b', 'hi', 'w']
+# Years types for data
+YEARS = [10, 15]
+# Zoom min and max for layers
+MAX_ZOOM = 14
+MIN_ZOOM = 3

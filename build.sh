@@ -17,6 +17,11 @@ SHOULD_BARCHART=$(if [ ! -z "${BAR_CHARTS}" ]; then echo "${BAR_CHARTS}"; else e
 # SHOULD_DICT=$(if [ ! -z "${BUILD_DICT}" ]; then echo "${BUILD_DICT}"; else echo 0; fi)
 # Build metro list. Boolean.
 SHOULD_METRO=$(if [ ! -z "${BUILD_METRO_LIST}" ]; then echo "${BUILD_METRO_LIST}"; else echo 0; fi)
+# Mapbox username and token for building tilesets.
+MAPBOX_USER=$(if [ ! -z "${MAPBOX_USERNAME}" ]; then echo "${MAPBOX_USERNAME}"; else echo 0; fi)
+MAPBOX_TOKEN=$(if [ ! -z "${MAPBOX_TOKEN}" ]; then echo "${MAPBOX_TOKEN}"; else echo 0; fi)
+# Data version
+DATA_VERSION=$(if [ ! -z "${DATA_VERSION}" ]; then echo "${DATA_VERSION}"; else echo 1.0.0; fi)
 
 # Print extra debug info?
 DEBUG=$(if [ "${DEBUG}" -eq 1 ]; then echo 1; else echo 0; fi)
@@ -94,7 +99,17 @@ if [ ! -z $SHOULD_BUILD ]; then
     nodejs ./scripts/generate_points.js
 
     # Build tilesets.
-    bash ./scripts/build_tilesets.sh $SHOULD_BUILD $DEBUG
+    if [[ $MAPBOX_TOKEN -eq 0 | $MAPBOX_USER ]]; then
+      echo "Mapbox token or Mapbox username not provided. You need to get that into the .env file  before you can build the tilesets."
+    else
+      # Generate tilesets.
+      bash ./scripts/generate_tilesets.sh $SHOULD_BUILD $DATA_VERSION $DEBUG
+      # Deploy tilesets.
+
+
+      # bash ./scripts/build_tilesets.sh $SHOULD_BUILD $MAPBOX_USER $MAPBOX_TOKEN $DATA_VERSION $DEBUG
+      # python3 ./scripts/build_tilesets.py $SHOULD_BUILD $MAPBOX_USER $MAPBOX_TOKEN $DATA_VERSION $DEBUG
+    fi
 
     # Deploy the data that was built.
     if [[ $SHOULD_DEPLOY -eq 1 ]]; then
