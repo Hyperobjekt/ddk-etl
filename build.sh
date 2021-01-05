@@ -104,11 +104,6 @@ if [ ! -z $SHOULD_BUILD ]; then
     else
       # Generate tilesets.
       bash ./scripts/generate_tilesets.sh $SHOULD_BUILD $DATA_VERSION $DEBUG
-      # Deploy tilesets.
-
-
-      # bash ./scripts/build_tilesets.sh $SHOULD_BUILD $MAPBOX_USER $MAPBOX_TOKEN $DATA_VERSION $DEBUG
-      # python3 ./scripts/build_tilesets.py $SHOULD_BUILD $MAPBOX_USER $MAPBOX_TOKEN $DATA_VERSION $DEBUG
     fi
 
     # Deploy the data that was built.

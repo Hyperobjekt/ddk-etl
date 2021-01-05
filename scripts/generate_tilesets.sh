@@ -1,8 +1,9 @@
 #!/bin/bash
-echo './scripts/generate_tilesets.sh'
+echo "./scripts/generate_tilesets.sh"
 
 # To test locally:
-# bash ./scripts/build_tilesets.sh tracts,states,metros $MAPBOX_USER $MAPBOX_TOKEN 1.0.0 1
+# bash ./scripts/generate_tilesets.sh tracts,states,metros 1.0.0 1
+# The size limit for mbtiles uploads is 25GB.
 
 # Get types of shapes to fetch based on argument.
 shape_types=(`echo $1 | tr ',' ' '`)
@@ -17,7 +18,9 @@ point_types=( ai ap b hi w )
 years=( 10 15 )
 # Max and min zoom
 min_zoom=3
-max_zoom=14
+max_zoom=13
+# Attribution for tilesets
+attribution="© diversitydatakids.org"
 
 
 # Source dir
@@ -34,44 +37,37 @@ fi
 shapes_list=""
 for shape in "${shape_types[@]}"
 do
-  echo "Creating tileset for ${shape}."
-  tippecanoe "--maximum-zoom=${max_zoom} --minimum-zoom=${min_zoom} -o ./mbtiles/${shape}.mbtiles -l ${shape} ./${OUTPUT_DIR}/geojson/${shape}.geojson"
-  shapes_list+="./mbtiles/${shape}.mbtiles"
-  # tilesets upload-source "${user}" "${shape}_${version}"  "${OUTPUT_DIR}/geojson/${shape}.geojson" --token ${token} --replace
+
+  echo "Generating tileset for ${shape}."
+  tippecanoe --maximum-zoom=${max_zoom} --minimum-zoom=${min_zoom} --maximum-tile-bytes=500000 --simplification=10 --no-tile-stats --no-feature-limit --coalesce-densest-as-needed --detect-shared-borders --use-attribute-for-id=GEOID --force -aI -o "./mbtiles/${shape}.mbtiles" -l ${shape} "./${OUTPUT_DIR}/geojson/${shape}.geojson"
+  shapes_list+="./mbtiles/${shape}.mbtiles "
+
 done
 
+# echo "Shapes list: ${shapes_list}"
 # Merge all those tilesets.
-tile-join "-o ./mbtiles/shapes.mbtiles ${shapes_list}"
+tile-join -o "./mbtiles/shapes_${version}.mbtiles" ${shapes_list} --force
+# Deploy tileset.
+nodejs ./scripts/deploy_tileset.js ./mbtiles/shapes_${version}.mbtiles "shapes_${version}"
 
 # Build tilesets for points.
-for points in "${point_types[@]}"
+for year in "${years[@]}"
 do
-  for year in "${years[@]}"
+  echo "Processing year ${year}."
+  year_list=""
+
+  for type in "${point_types[@]}"
   do
-    echo "Uploading source for ${points}_${years}."
-    tilesets upload-source  "${user}" "${points}_${version}" "${OUTPUT_DIR}/geojson/points_${points}_${yr}.geojson" --replace --token ${token}
+    echo "Generating tileset for for ${type}_${year}."
+    # -zg --drop-densest-as-needed --extend-zooms-if-still-dropping
+    tippecanoe --minimum-zoom=${min_zoom} --maximum-tile-bytes=500000 --generate-ids -zg --extend-zooms-if-still-dropping --no-feature-limit --drop-densest-as-needed --no-tile-stats --force -o ./mbtiles/points_${type}_${year}.mbtiles -l ${type} ${OUTPUT_DIR}/geojson/points_${type}_${year}.geojson
+    year_list+="./mbtiles/points_${type}_${year}.mbtiles "
   done
-done
 
-# Create tileset for shapes.
-shapeList=$(join , ${shape_types[@]})
-shapes_recipe=$(python ./recipe_shapes.py ${user} ${version})
-echo 'shapes_recipe:'
-echo shapes_recipe
-tilesets create "${user}.shapes-${version}" --recipe ${shapes_recipe} --name "Tileset for shapes ${shapeList}, version ${version}." --token ${token}
+  echo "year_list list: ${year_list}"
+  # Merge all files for that year together.
+  tile-join -o "./mbtiles/points_${year}_${version}.mbtiles" ${year_list} --force
+  # Deploy tileset for year.
+  nodejs ./scripts/deploy_tileset.js "./mbtiles/points_${year}_${version}.mbtiles" "points_${year}_${version}"
 
-for year in "${years[@]}"
-do
-  points_recipe=$(python ./recipe_points.py ${user} ${version} ${year})
-  echo 'points_recipe:'
-  echo points_recipe
-  tilesets create "${user}.points-${year}-${version}" --recipe ${points_recipe} --name "Tileset for points year ${year}, version ${version}." --token ${token}
-done
-
-# Publish tilesets.
-echo "Publishing tilesets."
-tilesets publish "${user}.shapes-${version}" --token ${token}
-for year in "${years[@]}"
-do
-  tilesets publish "${user}.points-${year}-${version}" --token ${token}
 done

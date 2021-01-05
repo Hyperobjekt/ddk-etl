@@ -49,7 +49,14 @@ const getPoints = ({ GEOID, column, value, met }) => {
   // No points to generate, stop.
   if (value === 0) return;
 
-  let points = featureCollectionPrefix
+  let points = ''
+  // If it's the first tract of this type, add the collection prefix.
+  if (isFirst[column] === 0) {
+    isFirst[column] = 1
+    points += featureCollectionPrefix
+  }
+
+
   // Get feature.
   const feature = features.find(el => {
     // console.log('filtering, ', el.properties.GEOID, row.GEOID)
