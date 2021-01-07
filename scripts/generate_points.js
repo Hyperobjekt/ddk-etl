@@ -44,15 +44,18 @@ pop_cols.forEach(col => {
   isFirst[col] = 0
 })
 
-const getPoints = ({ GEOID, column, value, met }) => {
-  console.log('getPoints, ', GEOID, column, value, met)
+const getPoints = ({ GEOID, c, v, m }) => {
+  const column = c
+  const value = v
+  const met = m
+  // console.log('getPoints, ', GEOID, column, value, met)
   // No points to generate, stop.
-  if (value === 0) return;
+  if (!value) return;
 
   let points = ''
   // If it's the first tract of this type, add the collection prefix.
   if (isFirst[column] === 0) {
-    isFirst[column] = 1
+    isFirst[column] += 1
     points += featureCollectionPrefix
   }
 
@@ -100,7 +103,7 @@ const getPoints = ({ GEOID, column, value, met }) => {
         // Append points as stringified json since we are streaming.
         const pointJSON = JSON.stringify(randomPoint);
         // Add commas only if it's not the first ever entry in the array of features.
-        if (isFirst[column] === 0) {
+        if (isFirst[column] === 1) {
           points += pointJSON;
         } else {
           points += ',' + pointJSON;
@@ -111,8 +114,7 @@ const getPoints = ({ GEOID, column, value, met }) => {
     }
     return points
   } else {
-    notFound.push(row.GEOID);
-    // console.log(`Feature not found! Tract: ${row.GEOID}.`)
+    notFound.push(GEOID);
   }
 }
 
@@ -136,9 +138,10 @@ fs.readFile(tracts_geo_source, 'utf8', (err, data) => {
             fs.appendFile(outFile, featureCollectionSuffix, (err) => {console.log(`There was an error: ${err}.`)})
           });
 
-          fs.createReadStream(tracts_data_source)
+          const stream = fs.createReadStream(tracts_data_source)
             .pipe(streamParse)
             .pipe(es.mapSync(function (d) {
+              // console.log('reading a row of data stream, ', d)
               return { GEOID: d.GEOID, c: col, v: d[col], m: d.msaid15 };
             }))
             .pipe(es.mapSync(function (d) {
@@ -146,10 +149,12 @@ fs.readFile(tracts_geo_source, 'utf8', (err, data) => {
             }))
             // .pipe(JSONStream.stringify())
             .pipe(out)
+            stream.on('end', () => {
+              fs.writeFile(`./${output_dir}/not_found.json`, JSON.stringify(notFound), (err) => {
+                console.log(`Error! ${err}`)
+              })
+            })
         });
-        fs.writeFile(`./${output_dir}/not_found.json`, JSON.stringify(notFound), (err) => {
-          console.log(`Error! ${err}`)
-        })
     }
 
 });

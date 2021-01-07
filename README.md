@@ -26,11 +26,17 @@ e.g. `docker run hyperobjekt/ddk-etl`
 # Build
 docker build -t hyperobjekt/ddk-etl .
 # Run
-docker run --env-file .env hyperobjekt/ddk-etl
+docker run -m 100G --env-file .env hyperobjekt/ddk-etl
 # List containers
 docker container list
 # Prune images
 docker image prune -a
+# REmove all stopped containers
+docker container prune
+# List containers
+docker ps -a
+# Write logs to a more accessible file
+docker logs [containername] > ~/Desktop/docker-logs.log
 ```
 
 ### Flags

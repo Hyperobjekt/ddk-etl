@@ -6,7 +6,8 @@ RUN apt-get update \
   && apt-get -y upgrade \
   && apt-get -y install git build-essential \
     libsqlite3-dev zlib1g-dev libssl-dev \
-    python3-dev python3-pip gzip curl wget \
+    python3-dev python3-pip \
+    gzip curl wget \
     libspatialindex-dev unzip locales tree
 
 # Set locale for UTF 8 encoding in shell
@@ -43,7 +44,7 @@ ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
 RUN node --version
 RUN npm --version
 
-RUN npm install -g mapshaper csv2geojson @turf/turf JSONStream event-stream
+RUN npm install -g mapshaper csv2geojson @turf/turf JSONStream event-stream aws-sdk axios
 
 COPY . /app
 WORKDIR /app/
@@ -52,7 +53,7 @@ WORKDIR /app/
 RUN pip3 install pipenv && pipenv install --system --skip-lock # System install python libs
 # RUN aws --version # Verify aws-cli installation
 # RUN pip show pandas # Verify pandas installation
-RUN tilesets --version # Verify mapbox-tilesets installation
+# RUN tilesets --version # Verify mapbox-tilesets installation
 
 # make entrypoint executable
 RUN chmod +x build.sh

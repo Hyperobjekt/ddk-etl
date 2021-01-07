@@ -11,15 +11,10 @@ echo 'fetch_proc_geojson.sh'
 shape_types=(`echo $1 | tr ',' ' '`)
 # Are we debugging?
 debug=$2
-# Source dir
-SOURCE_DIR="source"
-# Processed data dir
-OUTPUT_DIR="proc"
 
 for shape in "${shape_types[@]}"
 do
   mkdir -p "./geojson"
-  mkdir -p "./${SOURCE_DIR}/geojson"
   aws s3 cp s3://ddk-source/geojson/${shape}.geojson.gz ./geojson/${shape}.geojson.gz
   gunzip ./geojson/${shape}.geojson.gz
 done

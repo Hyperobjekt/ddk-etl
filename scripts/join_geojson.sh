@@ -32,13 +32,17 @@ do
   # head -5 "geojson/${shape}.geojson"
   tippecanoe-json-tool -e GEOID "geojson/${shape}.geojson" | LC_ALL=C sort > "${SOURCE_DIR}/geojson/${shape}.sort.geojson"
   if [[ $debug -eq 1 ]]; then
-    echo "======== GeoJSON after sorting:"
-    head -5 "${SOURCE_DIR}/geojson/${shape}.sort.geojson"
+    if [[ $shape -eq "tracts" ]]; then
+      # echo "======== GeoJSON after sorting:"
+      # head -5 "${SOURCE_DIR}/geojson/${shape}.sort.geojson"
+    fi
   fi
-  tippecanoe-json-tool -pe -w -c "${OUTPUT_DIR}/${shape}.csv" "${SOURCE_DIR}/geojson/${shape}.sort.geojson" > "${OUTPUT_DIR}/${shape}.geojson"
+  tippecanoe-json-tool -pe -w -c "${OUTPUT_DIR}/${shape}.csv" "${SOURCE_DIR}/geojson/${shape}.sort.geojson" > "${OUTPUT_DIR}/geojson/${shape}.geojson"
   if [[ $debug -eq 1 ]]; then
     echo "========== Joined GeoJSON for ${shape}."
-    head -2 "${OUTPUT_DIR}/${shape}.geojson"
+    if [[ $shape -eq "tracts" ]]; then
+      head -2 "./${OUTPUT_DIR}/geojson/${shape}.geojson"
+    fi
   fi
 done
 

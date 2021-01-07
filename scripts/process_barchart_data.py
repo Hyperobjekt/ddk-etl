@@ -33,22 +33,26 @@ result = {
 
 # Get metro data to make dict.
 metros = pd.DataFrame()
-metros_path = f'{OUTPUT_DIR}/helpers/metros.csv'
+metros_path = f'{OUTPUT_DIR}/metros.csv'
+metros_list = []
 if os.path.exists(metros_path):
     metros = pd.read_csv(metros_path)
+    # print('printing metros, line 40')
+    # print(metros.head())
     metros = metros.drop(['countyfips', 'statefips', 'stateusps', 'in100'], axis=1)
     metros_list = metros.to_dict('records')
 states = pd.DataFrame()
 # Prep list of states to receive state info.
 states_path = f'{SOURCE_DIR}/barcharts/stateusps.csv'
+state_list = []
 if os.path.exists(states_path):
     states = pd.read_csv(states_path)
     states = states.drop(['grp','year','aian','api','black','hisp','white'], axis=1)
     states_list = states.to_dict('records')
 
 for metro in metros_list:
-    result['2010']['metros'][metro['msaid15']] = []
-    result['2015']['metros'][metro['msaid15']] = []
+    result['2010']['metros'][metro['GEOID']] = []
+    result['2015']['metros'][metro['GEOID']] = []
 
 for state in states_list:
     result['2010']['states'][state['stateusps']] = []
@@ -77,18 +81,20 @@ for csv in chart_data_arr:
           source.columns = source.columns.str.replace(str(key), str(value))
         print(f'Ran csv {csv} through search and replace:')
         print(source.head())
+        # print("Printing metros.")
+        # print(metros.head())
         # Replace strings in High/Low/etc column
         source['grp'] = source['grp'].replace(REPLACE_DICT, inplace=False)
         # Sort by msaname and then by grp.
         if (csv == 'msaname15'):
-            source = pd.merge(source, metros, left_on="msaname15", right_on="msaname15")
-            source = source[['msaid15', 'grp', 'year', 'ai', 'ap', 'b', 'hi', 'w']]
-            source = source.sort_values(by=['year', 'msaid15', 'grp'])
+            source = pd.merge(source, metros, on="msaname15")
+            source = source[['GEOID', 'grp', 'year', 'ai', 'ap', 'b', 'hi', 'w']]
+            source = source.sort_values(by=['year', 'GEOID', 'grp'])
             # Also write the data to a dict that will be exported as JSON.
             dict = source.to_dict('records')
             for item in dict:
                 year = str(item.get('year'))
-                id = item.get('msaid15')
+                id = item.get('GEOID')
                 result[year]['metros'][id].append(item)
         if (csv == 'nation'):
             source = source[['grp', 'year', 'ai', 'ap', 'b', 'hi', 'w']]

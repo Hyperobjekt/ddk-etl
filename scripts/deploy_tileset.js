@@ -9,6 +9,7 @@ const mbCredUrl = `https://api.mapbox.com/uploads/v1/${username}/credentials?acc
 const mbUploadUrl = `https://api.mapbox.com/uploads/v1/${username}?access_token=${mbToken}`;
 
 const completeUpload = function (config, name) {
+  console.log('completeUpload, ', config, name)
   const headers = {
     "Content-Type": "application/json",
     "Cache-Control": "no-cache"
@@ -48,8 +49,10 @@ const uploadToS3 = function (filepath, config, name) {
 
 const deployTileset = function (filepath, name) {
   // 1. Get credentials for s3 bucket
+  // console.log('deployTileset, getting credentials')
   axios.post(mbCredUrl)
     .then(function (config) {
+      // console.log('config is, ', config)
       AWS.config.update({
         region: "us-east-1",
         credentials: new AWS.Credentials(
@@ -65,7 +68,11 @@ const deployTileset = function (filepath, name) {
     });
 }
 
-const filepath = process.argv[2];
-const tileset_name = process.argv[3];
+console.log('deployTileset!')
+
+const filepath = process.argv[2]
+console.log('filepath, ', filepath)
+const tileset_name = String(process.argv[3]).replace(/\./g, '-');
+console.log('tileset_name, ', tileset_name)
 
 deployTileset(filepath, tileset_name);
