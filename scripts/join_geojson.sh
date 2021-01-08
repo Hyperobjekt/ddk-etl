@@ -15,6 +15,8 @@ SOURCE_DIR="source"
 # Processed data dir
 OUTPUT_DIR="proc"
 
+ulimit -n 10000
+
 if [ ! -d "./${SOURCE_DIR}/geojson" ]
 then
   mkdir -p "./${SOURCE_DIR}/geojson"

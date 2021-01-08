@@ -114,12 +114,6 @@ if [ ! -z $SHOULD_BUILD ]; then
        --acl=public-read \
        --region=us-east-1 \
 		   --cache-control max-age=2628000
-
-      # Deploy files into the appropriate version directory.
-      aws s3 cp --recursive ./mbtiles s3://ddk-source/mbtiles/${DATA_VERSION}/ \
-      --acl=public-read \
-      --region=us-east-1 \
-       --cache-control max-age=2628000
     fi
 
 fi

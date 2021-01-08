@@ -24,8 +24,6 @@ console.log('Generating points for dot density layer(s).')
 // To run locally: node ./scripts/generate_points.js
 
 const fs = require('fs');
-const JSONStream = require('JSONStream');
-const es = require('event-stream');
 const turf = require("@turf/turf");
 
 const source_dir = 'source'
@@ -51,16 +49,9 @@ const getPoints = ({ GEOID, c, v, m }) => {
   const met = m
   // console.log('getPoints, ', GEOID, column, value, met)
   // No points to generate, stop.
-  if (!value) return;
-
+  if (!value) return '';
+  // Set string to collect points.
   let points = ''
-  // If it's the first tract of this type, add the collection prefix.
-  if (isFirst[column] === 0) {
-    isFirst[column] += 1
-    points += featureCollectionPrefix
-  }
-
-
   // Get feature.
   const feature = features.find(el => {
     // console.log('filtering, ', el.properties.GEOID, row.GEOID)
@@ -104,11 +95,16 @@ const getPoints = ({ GEOID, c, v, m }) => {
         // Append points as stringified json since we are streaming.
         const pointJSON = JSON.stringify(randomPoint);
         // Add commas only if it's not the first ever entry in the array of features.
-        if (isFirst[column] === 1) {
-          points += pointJSON;
+        if (isFirst[column] == 0) {
+          // console.log(`isFirst for ${column} is 0. ${pointJSON}`);
+          points = points + pointJSON;
+          // console.log('points, ', points);
+          isFirst[column] = 1;
+          // console.log('points = ', points)
         } else {
-          points += ',' + pointJSON;
+          points = points + ',' + pointJSON;
         }
+        // console.log('points = ', points)
         hits++;
       }
       attempts++;
@@ -124,70 +120,58 @@ fs.readFile(tracts_geo_source, 'utf8', (err, data) => {
     if (err) {
         console.log(`Error reading file from disk: ${err}`);
     } else {
-        console.log('Loaded tracts geojson.');
-        const tracts = JSON.parse(data);
-        features = tracts.features;
+      console.log('Loaded tracts geojson.');
+      const tracts = JSON.parse(data);
+      features = tracts.features;
 
-        fs.readfile(tracts_data_source, 'utf8', (err, data) => {
-          if (err) {
-              console.log(`Error reading rows from disk: ${err}`);
-          } else {
-            console.log('Loaded demographic json.');
-            const rows = JSON.parse(data);
-            console.log('rows.length, ', rows.length)
-            // Make files to write to.
-            for (var v = 0; v < pop_cols.length; v++) {
-              fs.writeFile(`./${output_dir}/geojson/points_${pop_cols[v]}.json`,   featureCollectionPrefix, (err) => {
+      fs.readFile(tracts_data_source, 'utf8', (err, data) => {
+        if (err) {
+            console.log(`Error reading rows from disk: ${err}`);
+        } else {
+          console.log('Loaded demographic json.');
+          const rows = JSON.parse(data);
+          console.log('rows.length, ', rows.length)
+          // Make files to write to.
+          for (var v = 0; v < pop_cols.length; v++) {
+            // console.log(`Writing file ${v}`, featureCollectionPrefix)
+            fs.writeFileSync(`./${output_dir}/geojson/points_${pop_cols[v]}.geojson`, featureCollectionPrefix, 'utf8', (err) => {
+              if (err)
                 console.log(`Error creating demo file ${pop_cols[v]}!`, err)
-              })
+              else {
+                console.log("File written successfully\n");
+              }
+            })
+          }
+
+          // Iterate over each row, creating points for each demographic, appending points to the appropriate file.
+          for (var b = 0; b < rows.length; b++) {
+            const d = rows[b]
+            if (b % 1000 === 0) {
+              console.log(`Working on row ${b}, msaid ${d.msaid15}.`);
             }
-            // Iterate over each row, creating points for each demographic, appending those files.
-            for (var b = 0; b < rows.length; b++) {
-              console.log(`Working on row ${b}, msaid ${rows[b].msaid}.`);
-              for (var v = 0; v < pop_cols.length; v++) {
-                const obj = { GEOID: rows[b].GEOID, c: pop_cols[v], v: rows[b][pop_cols[v]], m: rows[b].msaid15 }
-                fs.appendFile(`./${output_dir}/geojson/points_${pop_cols[v]}.json`,  getPoints(obj), (err) => {
+            for (var v = 0; v < pop_cols.length; v++) {
+              // const d = rows[b]
+              const p = { GEOID: d.GEOID, c: pop_cols[v], v: d[pop_cols[v]], m: d.msaid15 };
+              const points = getPoints(p);
+              if (points && points.length > 0) {
+                fs.appendFileSync(`./${output_dir}/geojson/points_${pop_cols[v]}.geojson`, points, (err) => {
                   console.log(`Error creating demo file ${pop_cols[v]}!`, err)
                 })
+              } else {
+                // console.log(`Points was null for ${d.GEOID}.`, p)
               }
             }
-            // Append closing info to files.
-            for (var v = 0; v < pop_cols.length; v++) {
-              fs.appendFile(`./${output_dir}/geojson/points_${pop_cols[v]}.json`,   featureCollectionSuffix, (err) => {
-                console.log(`Error appending points to demo file ${pop_cols[v]} in row ${b}!`, err)
-              })
-            }
           }
+          // Append closing info to files.
+          for (var v = 0; v < pop_cols.length; v++) {
+            fs.appendFileSync(`./${output_dir}/geojson/points_${pop_cols[v]}.geojson`, featureCollectionSuffix, (err) => {
+              console.log(`Error appending points to demo file ${pop_cols[v]} in row ${b}!`, err)
+            })
+          }
+        }
+        fs.writeFileSync(`./${output_dir}/geojson/points_features_not_found.json`, JSON.stringify(notFound), (err) => {
+          console.log(`Error writing not found file!`, err)
         })
-
-
-        // pop_cols.forEach(col => {
-        //   console.log('foreach, ', col)
-        //   activeColumn = col;
-        //   const streamParse = JSONStream.parse('*')
-        //   const outFile = `./${output_dir}/geojson/points_${col}.geojson`
-        //   // const append = fs.appendFile(outFile, featureCollectionSuffix, (err) => {console.log(`There was an error: ${err}.`)})
-        //   const out = fs.createWriteStream(outFile).on('close', function() {
-        //     console.log(`File ${col} closed. Calling append.`)
-        //     fs.appendFile(outFile, featureCollectionSuffix, (err) => {console.log(`There was an error: ${err}.`)})
-        //   });
-        //
-        //   const stream = fs.createReadStream(tracts_data_source)
-        //     .pipe(streamParse)
-        //     .pipe(es.mapSync(function (d) {
-        //       // console.log('reading a row of data stream, ', d)
-        //       return { GEOID: d.GEOID, c: col, v: d[col], m: d.msaid15 };
-        //     }))
-        //     .pipe(es.mapSync(function (d) {
-        //       return getPoints(d)
-        //     }))
-        //     // .pipe(JSONStream.stringify())
-        //     .pipe(out)
-        //     stream.on('end', () => {
-        //       fs.writeFile(`./${output_dir}/not_found.json`, JSON.stringify(notFound), (err) => {
-        //         console.log(`Error! ${err}`)
-        //       })
-        //     })
-        // });
+      })
     }
 });

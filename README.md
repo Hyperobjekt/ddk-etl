@@ -32,6 +32,8 @@ docker run -m 100G --env-file .env hyperobjekt/ddk-etl
 docker container list
 # Prune images
 docker image prune -a
+# Clean up even more stuff
+docker system prune
 # REmove all stopped containers
 docker container prune
 # List containers

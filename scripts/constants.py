@@ -10,6 +10,8 @@ METROS_PROC = 'metros'
 LONG_STRING_COLS = ['c5_ed_nat', 'c5_he_nat', 'c5_se_nat', 'c5_coi_nat', 'c5_ed_stt', 'c5_he_stt', 'c5_se_stt', 'c5_coi_stt', 'c5_ed_met', 'c5_he_met', 'c5_se_met', 'c5_coi_met']
 # Columns to include on tracts json to go into tilesset
 TRACT_GEOJSON_COLS = ['GEOID', 'in100', 'msaid15', 'countyfips', 'statefips', 'stateusps', 'pop', 'x_c5_e_n_10', 'x_c5_h_n_10', 'x_c5_o_n_10', 'x_c5_c_n_10', 'x_c5_e_s_10', 'x_c5_h_s_10', 'x_c5_o_s_10', 'x_c5_c_s_10', 'x_c5_e_m_10', 'x_c5_h_m_10', 'x_c5_o_m_10', 'x_c5_c_m_10', 'x_c5_e_n_15', 'x_c5_h_n_15', 'x_c5_o_n_15', 'x_c5_c_n_15', 'x_c5_e_s_15', 'x_c5_h_s_15', 'x_c5_o_s_15', 'x_c5_c_s_15', 'x_c5_e_m_15', 'x_c5_h_m_15', 'x_c5_o_m_15', 'x_c5_c_m_15']
+# Without underscores.
+# TRACTGEOJSONCOLS = ['GEOID', 'in100', 'msaid15', 'countyfips', 'statefips', 'stateusps', 'pop', 'xc5en10', 'xc5hn10', 'xc5on10', 'xc5cn10', 'xc5es10', 'xc5hs10', 'xc5os10', 'xc5cs10', 'xc5em10', 'xc5hm10', 'xc5om10', 'xc5cm10', 'xc5en15', 'xc5hn15', 'xc5on15', 'xc5cn15', 'xc5es15', 'xc5hs15', 'xc5os15', 'xc5cs15', 'xc5em15', 'xc5hm15', 'xc5om15', 'xc5cm15']
 # Columns for population exports.
 POP_COLS = ['GEOID', 'in100',	'msaid15', 'countyfips', 'statefips', 'pop', 'ai_10', 'ap_10', 'b_10', 'hi_10', 'o2_10', 'nw_10', 'w_10', 't_10', 'ai_15', 'ap_15', 'b_15', 'hi_15', 'o2_15', 'nw_15', 'w_15', 't_15']
 # Key for these conversions of string to number.

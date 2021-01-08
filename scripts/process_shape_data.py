@@ -77,8 +77,9 @@ for shape in shapetypes:
                   source.columns = new_cols
                   print('Prefixed index columns')
                   print(source.head())
-              source["geoid"] = "0" + source["geoid"].astype(str)
-              print('Prefixed geoid column.')
+              # source["geoid"] = "0" + source["geoid"].astype(str)
+              source["geoid"] = source["geoid"].astype(str).str.pad(11, side='left', fillchar='0')
+              print('Padded geoid column.')
               print(source.head())
               # Replace to shorten column headers and keep json small.
               for key, value in SEARCH_AND_REPLACE.items():
@@ -134,6 +135,7 @@ for shape in shapetypes:
                       metros['dual_st'] = metros['msaname15'].str.contains(',\s[A-Z]{2}-[A-Z]{2}', regex=True)
                       metros['dual_st'] = metros['dual_st'].fillna(0).astype(int)
                       metros.rename(columns={'msaid15': 'GEOID'}, inplace=True)
+                      # Type as number because we're getting mismatches.
                       metros['GEOID'] = metros['GEOID'].astype(str)
                       metros = metros.dropna(axis=0)
                       metros = metros.sort_values(by=['GEOID'])
