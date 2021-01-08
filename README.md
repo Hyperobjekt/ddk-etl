@@ -26,6 +26,7 @@ e.g. `docker run hyperobjekt/ddk-etl`
 # Build
 docker build -t hyperobjekt/ddk-etl .
 # Run
+docker run --env-file .env hyperobjekt/ddk-etl
 docker run -m 100G --env-file .env hyperobjekt/ddk-etl
 # List containers
 docker container list

@@ -46,7 +46,7 @@ SEARCH_AND_REPLACE = {
     'rsei': 'rs', # Industrial pollutants in air, water or soil
     'pm25': 'pm', # Airborne microparticles
     'ozone': 'oz', # Ozone concentration
-    'heat': 'he', # Extreme heat exposure
+    'heat': 'ha', # Extreme heat exposure
     'hlthins': 'hl', # Health insurance coverage
     'emprat': 'em', # Employment rate
     'jobprox': 'jo', # Commute duration
@@ -66,6 +66,8 @@ SEARCH_AND_REPLACE = {
     'nat': 'n',
     'stt': 's',
     'met': 'm',
+    # Remove underscores
+    # '_': '',
 }
 
 # Point types for processing the point data.

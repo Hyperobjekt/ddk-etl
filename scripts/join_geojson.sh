@@ -31,12 +31,6 @@ do
   echo "======== Processing geojson for ${shape}."
   # head -5 "geojson/${shape}.geojson"
   tippecanoe-json-tool -e GEOID "geojson/${shape}.geojson" | LC_ALL=C sort > "${SOURCE_DIR}/geojson/${shape}.sort.geojson"
-  if [[ $debug -eq 1 ]]; then
-    if [[ $shape -eq "tracts" ]]; then
-      # echo "======== GeoJSON after sorting:"
-      # head -5 "${SOURCE_DIR}/geojson/${shape}.sort.geojson"
-    fi
-  fi
   tippecanoe-json-tool -pe -w -c "${OUTPUT_DIR}/${shape}.csv" "${SOURCE_DIR}/geojson/${shape}.sort.geojson" > "${OUTPUT_DIR}/geojson/${shape}.geojson"
   if [[ $debug -eq 1 ]]; then
     echo "========== Joined GeoJSON for ${shape}."
@@ -49,6 +43,6 @@ done
 echo "Done merging csv into geojson."
 if [[ $debug -eq 1 ]]; then
   # head -2 "${OUTPUT_DIR}/geojson/${shape}.geojson"
-  tree "./${SOURCE_DIR}"
   tree "./${OUTPUT_DIR}"
+  ls -lah "./${OUTPUT_DIR}/geojson/"
 fi

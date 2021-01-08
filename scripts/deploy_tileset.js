@@ -9,7 +9,7 @@ const mbCredUrl = `https://api.mapbox.com/uploads/v1/${username}/credentials?acc
 const mbUploadUrl = `https://api.mapbox.com/uploads/v1/${username}?access_token=${mbToken}`;
 
 const completeUpload = function (config, name) {
-  console.log('completeUpload, ', config, name)
+  // console.log('completeUpload, ', config, name)
   const headers = {
     "Content-Type": "application/json",
     "Cache-Control": "no-cache"

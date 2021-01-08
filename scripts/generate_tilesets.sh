@@ -37,17 +37,20 @@ ls -lah ./${OUTPUT_DIR}/geojson/
 
 # Build tilesets for shapes.
 # tracts
-tippecanoe -Z 7 -z 14 -o "./mbtiles/tracts_${version}.mbtiles" -l ${shape} "./${OUTPUT_DIR}/geojson/tracts.geojson" --drop-densest-as-needed --use-attribute-for-id=GEOID --convert-stringified-ids-to-numbers --force
+echo "Building tileset for tracts."
+tippecanoe -Z7 -z14 -l tracts -o "./mbtiles/tracts_${version}.mbtiles" -x GEO_ID -x STATE -x COUNTY -x TRACT -x NAME -x LSAD -x CENSUSAREA --drop-densest-as-needed --coalesce-densest-as-needed --use-attribute-for-id=GEOID --convert-stringified-ids-to-numbers --force "./${OUTPUT_DIR}/geojson/tracts.geojson"
 node ./scripts/deploy_tileset.js "./mbtiles/tracts_${version}.mbtiles" "tracts_${version}"
 # states
-tippecanoe -Z ${min_zoom} -z ${max_zoom} -o "./mbtiles/states_${version}.mbtiles" -l ${shape} "./${OUTPUT_DIR}/geojson/states.geojson" --simplification=8 --drop-densest-as-needed --use-attribute-for-id=GEOID --convert-stringified-ids-to-numbers --force
+echo "Building tileset for states."
+tippecanoe -Z${min_zoom} -z${max_zoom} -o "./mbtiles/states_${version}.mbtiles" -l states -x GEO_ID -x STATE -x NAME -x LSAD -x CENSUSAREA --simplification=8 --drop-densest-as-needed --use-attribute-for-id=GEOID --convert-stringified-ids-to-numbers --force "./${OUTPUT_DIR}/geojson/states.geojson"
 node ./scripts/deploy_tileset.js "./mbtiles/states_${version}.mbtiles" "states_${version}"
 # metros
-tippecanoe -Z 4 -z ${max_zoom} -o "./mbtiles/metros_${version}.mbtiles" -l ${shape} "./${OUTPUT_DIR}/geojson/metros.geojson" --drop-densest-as-needed --use-attribute-for-id=GEOID --convert-stringified-ids-to-numbers --force
+echo "Building tileset for metros."
+tippecanoe -Z4 -z${max_zoom} -o "./mbtiles/metros_${version}.mbtiles" -l metros -x GEO_ID -x CENSUSAREA -x LSAD --drop-densest-as-needed --use-attribute-for-id=GEOID --convert-stringified-ids-to-numbers --force "./${OUTPUT_DIR}/geojson/metros.geojson"
 node ./scripts/deploy_tileset.js "./mbtiles/metros_${version}.mbtiles" "metros_${version}"
 
-
-
+tile-join -pk -o "./mbtiles/shapes_${version}.mbtiles" "./mbtiles/tracts_${version}.mbtiles ./mbtiles/states_${version}.mbtiles ./mbtiles/metros_${version}.mbtiles"
+node ./scripts/deploy_tileset.js "./mbtiles/shapes_${version}.mbtiles" "shapes_${version}"
 
 # shapes_list=""
 # for shape in "${shape_types[@]}"

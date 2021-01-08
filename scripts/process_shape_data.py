@@ -39,7 +39,7 @@ for shape in shapetypes:
       for csv in csvs_arr:
           print(f'Processing {csv}.')
           # plot.savefig(f'hanning{num}.pdf')
-          path = f'{SOURCE_DIR}/{shape}/{csv}.csv'
+          path = f'{SOURCE_DIR}/{shape}/{csv}/{csv}.csv'
           # print('Path is ' + path)
           # Make sure the file exists.
           if os.path.exists(path):

@@ -88,7 +88,7 @@ if [ ! -z $SHOULD_BUILD ]; then
     bash ./scripts/join_geojson.sh $SHOULD_BUILD $DEBUG
 
     # Generate points for population data.
-    # node ./scripts/generate_points.js
+    node ./scripts/generate_points.js
 
     # Build tilesets.
     if [[ -z "${MAPBOX_TKN}" ]] || [[ -z "${MAPBOX_USER}" ]]; then
@@ -114,6 +114,12 @@ if [ ! -z $SHOULD_BUILD ]; then
        --acl=public-read \
        --region=us-east-1 \
 		   --cache-control max-age=2628000
+
+      # Deploy files into the appropriate version directory.
+      aws s3 cp --recursive ./mbtiles s3://ddk-source/mbtiles/${DATA_VERSION}/ \
+      --acl=public-read \
+      --region=us-east-1 \
+       --cache-control max-age=2628000
     fi
 
 fi
