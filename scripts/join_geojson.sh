@@ -37,7 +37,7 @@ do
   if [[ $debug -eq 1 ]]; then
     echo "========== Joined GeoJSON for ${shape}."
     if [[ $shape -eq "tracts" ]]; then
-      head -2 "./${OUTPUT_DIR}/geojson/${shape}.geojson"
+      tail -2 "./${OUTPUT_DIR}/geojson/${shape}.geojson"
     fi
   fi
 done

@@ -18,7 +18,7 @@ point_types=( ai ap b hi w )
 years=( 10 15 )
 # Max and min zoom
 min_zoom=3
-max_zoom=13
+max_zoom=14
 # Attribution for tilesets
 attribution="© diversitydatakids.org"
 
@@ -42,15 +42,15 @@ fi
 # Build tilesets for shapes.
 # tracts
 echo "Building tileset for tracts."
-tippecanoe -Z7 -z14 -l tracts -o "./mbtiles/tracts_${version}.mbtiles" -x GEO_ID -x STATE -x COUNTY -x TRACT -x NAME -x LSAD -x CENSUSAREA --no-feature-limit --drop-densest-as-needed --coalesce-densest-as-needed --use-attribute-for-id=GEOID --convert-stringified-ids-to-numbers --force "./${OUTPUT_DIR}/geojson/tracts.geojson"
+tippecanoe -Z7 -z${max_zoom} -l tracts -o "./mbtiles/tracts_${version}.mbtiles" -x GEO_ID -x STATE -x COUNTY -x TRACT -x NAME -x LSAD -x CENSUSAREA --no-feature-limit --drop-densest-as-needed --coalesce-densest-as-needed --use-attribute-for-id=GEOID --convert-stringified-ids-to-numbers --force "./${OUTPUT_DIR}/geojson/tracts.geojson"
 node ./scripts/deploy_tileset.js "./mbtiles/tracts_${version}.mbtiles" "tracts_${version}"
 # states
 echo "Building tileset for states."
-tippecanoe -Z${min_zoom} -z${max_zoom} -o "./mbtiles/states_${version}.mbtiles" -l states -x GEO_ID -x STATE -x NAME -x LSAD -x CENSUSAREA --simplification=8 --drop-densest-as-needed --use-attribute-for-id=GEOID --convert-stringified-ids-to-numbers --force "./${OUTPUT_DIR}/geojson/states.geojson"
+tippecanoe -Z${min_zoom} -z${max_zoom} -o "./mbtiles/states_${version}.mbtiles" -l states -x GEO_ID -x STATE -x NAME -x name -x LSAD -x CENSUSAREA --simplification=8 --drop-densest-as-needed --use-attribute-for-id=GEOID --convert-stringified-ids-to-numbers --force "./${OUTPUT_DIR}/geojson/states.geojson"
 node ./scripts/deploy_tileset.js "./mbtiles/states_${version}.mbtiles" "states_${version}"
 # metros
 echo "Building tileset for metros."
-tippecanoe -Z4 -z${max_zoom} -o "./mbtiles/metros_${version}.mbtiles" -l metros -x GEO_ID -x CENSUSAREA -x LSAD -x msaname15 --drop-densest-as-needed --use-attribute-for-id=GEOID --convert-stringified-ids-to-numbers --force "./${OUTPUT_DIR}/geojson/metros.geojson"
+tippecanoe -Z4 -z${max_zoom} -o "./mbtiles/metros_${version}.mbtiles" -l metros -x GEO_ID -x CENSUSAREA -x LSAD -x msaname15 -x NAME --drop-densest-as-needed --use-attribute-for-id=GEOID --convert-stringified-ids-to-numbers --force "./${OUTPUT_DIR}/geojson/metros.geojson"
 node ./scripts/deploy_tileset.js "./mbtiles/metros_${version}.mbtiles" "metros_${version}"
 
 tile-join -pk -o ./mbtiles/shapes_${version}.mbtiles ./mbtiles/tracts_${version}.mbtiles ./mbtiles/states_${version}.mbtiles ./mbtiles/metros_${version}.mbtiles
@@ -86,16 +86,21 @@ do
   for type in "${point_types[@]}"
   do
     echo "Generating tileset for for ${type}_${year}."
-    # -zg --drop-densest-as-needed --extend-zooms-if-still-dropping
-    tippecanoe -Z${min_zoom} -z${max_zoom} -o ./mbtiles/points_${type}_${year}.mbtiles -l ${type} --maximum-tile-bytes=500000 --generate-ids -zg --extend-zooms-if-still-dropping --no-feature-limit --drop-densest-as-needed --force ./${OUTPUT_DIR}/geojson/points_${type}_${year}.geojson
-    year_list+="./mbtiles/points_${type}_${year}.mbtiles "
+    tippecanoe -Z${min_zoom} -z${max_zoom} -o ./mbtiles/points_${type}_${year}.mbtiles -l ${type} --generate-ids --no-feature-limit --extend-zooms-if-still-dropping --drop-densest-as-needed --force ./${OUTPUT_DIR}/geojson/points_${type}_${year}.geojson
+    if [[ $type -ne 'w' ]]
+    then
+      echo "Adding tileset points_${type}_${year} to year_list."
+      year_list+="./mbtiles/points_${type}_${year}.mbtiles "
+    fi
   done
 
-  echo "year_list list: ${year_list}"
+  # echo "year_list list: ${year_list}"
   # Merge all files for that year together.
   tile-join -pk -o "./mbtiles/points_${year}_${version}.mbtiles" --force ${year_list}
   # Deploy tileset for year.
   node ./scripts/deploy_tileset.js "./mbtiles/points_${year}_${version}.mbtiles" "points_${year}_${version}"
+  # Deploy the white people all by themselves.
+  node ./scripts/deploy_tileset.js "./mbtiles/points_w_${year}.mbtiles" "points_${year}_${version}"
 
 done
 
