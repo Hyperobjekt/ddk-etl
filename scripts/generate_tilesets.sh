@@ -18,7 +18,7 @@ point_types=( ai ap b hi w )
 years=( 10 15 )
 # Max and min zoom
 min_zoom=3
-max_zoom=14
+max_zoom=10 # Above 10 = increased processing and hosting costs.
 # Attribution for tilesets
 attribution="© diversitydatakids.org"
 
@@ -43,15 +43,15 @@ fi
 # tracts
 echo "Building tileset for tracts."
 tippecanoe -Z7 -z${max_zoom} -l tracts -o "./mbtiles/tracts_${version}.mbtiles" -x GEO_ID -x STATE -x COUNTY -x TRACT -x NAME -x LSAD -x CENSUSAREA --no-feature-limit --drop-densest-as-needed --coalesce-densest-as-needed --use-attribute-for-id=GEOID --convert-stringified-ids-to-numbers --force "./${OUTPUT_DIR}/geojson/tracts.geojson"
-node ./scripts/deploy_tileset.js "./mbtiles/tracts_${version}.mbtiles" "tracts_${version}"
+# node ./scripts/deploy_tileset.js "./mbtiles/tracts_${version}.mbtiles" "tracts_${version}"
 # states
 echo "Building tileset for states."
 tippecanoe -Z${min_zoom} -z${max_zoom} -o "./mbtiles/states_${version}.mbtiles" -l states -x GEO_ID -x STATE -x NAME -x name -x LSAD -x CENSUSAREA --simplification=8 --drop-densest-as-needed --use-attribute-for-id=GEOID --convert-stringified-ids-to-numbers --force "./${OUTPUT_DIR}/geojson/states.geojson"
-node ./scripts/deploy_tileset.js "./mbtiles/states_${version}.mbtiles" "states_${version}"
+# node ./scripts/deploy_tileset.js "./mbtiles/states_${version}.mbtiles" "states_${version}"
 # metros
 echo "Building tileset for metros."
 tippecanoe -Z4 -z${max_zoom} -o "./mbtiles/metros_${version}.mbtiles" -l metros -x GEO_ID -x CENSUSAREA -x LSAD -x msaname15 -x NAME --drop-densest-as-needed --use-attribute-for-id=GEOID --convert-stringified-ids-to-numbers --force "./${OUTPUT_DIR}/geojson/metros.geojson"
-node ./scripts/deploy_tileset.js "./mbtiles/metros_${version}.mbtiles" "metros_${version}"
+# node ./scripts/deploy_tileset.js "./mbtiles/metros_${version}.mbtiles" "metros_${version}"
 
 tile-join -pk -o ./mbtiles/shapes_${version}.mbtiles ./mbtiles/tracts_${version}.mbtiles ./mbtiles/states_${version}.mbtiles ./mbtiles/metros_${version}.mbtiles
 node ./scripts/deploy_tileset.js "./mbtiles/shapes_${version}.mbtiles" "shapes_${version}"
@@ -60,22 +60,6 @@ if [[ $DEBUG -eq 1 ]]; then
   tree ./mbtiles
   ls -lah ./mbtiles
 fi
-
-
-# shapes_list=""
-# for shape in "${shape_types[@]}"
-# do
-#   echo "Generating tileset for ${shape}."
-#   # -Z 2 -z 7
-#   tippecanoe -Z ${min_zoom} -z ${max_zoom} -x GEO_ID -x STATE -x COUNTY -x TRACT -x NAME -x LSAD -x CENSUSAREA -o "./mbtiles/${shape}_${version}.mbtiles" -l ${shape} "./${OUTPUT_DIR}/geojson/${shape}.geojson" --simplification=8 --coalesce-densest-as-needed --use-attribute-for-id=GEOID --convert-stringified-ids-to-numbers --force
-#   node ./scripts/deploy_tileset.js "./mbtiles/${shape}_${version}.mbtiles" "${shape}_${version}"
-#   # shapes_list+="./mbtiles/${shape}.mbtiles "
-# done
-
-# echo "Shapes list: ${shapes_list}"
-# Merge all those tilesets.
-# tile-join -o -pk "./mbtiles/shapes_${version}.mbtiles" ${shapes_list} --force
-
 
 # Build tilesets for points.
 for year in "${years[@]}"
@@ -86,7 +70,7 @@ do
   for type in "${point_types[@]}"
   do
     echo "Generating tileset for for ${type}_${year}."
-    tippecanoe -Z${min_zoom} -z${max_zoom} -o ./mbtiles/points_${type}_${year}.mbtiles -l ${type} --generate-ids --no-feature-limit --extend-zooms-if-still-dropping --drop-densest-as-needed --force ./${OUTPUT_DIR}/geojson/points_${type}_${year}.geojson
+    tippecanoe -Z${min_zoom} -z${max_zoom} -o ./mbtiles/points_${type}_${year}.mbtiles -l ${type} --generate-ids --no-feature-limit --drop-densest-as-needed --force ./${OUTPUT_DIR}/geojson/points_${type}_${year}.geojson
     if [[ $type -ne 'w' ]]
     then
       echo "Adding tileset points_${type}_${year} to year_list."
