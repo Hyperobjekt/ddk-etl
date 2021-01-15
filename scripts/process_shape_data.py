@@ -94,7 +94,7 @@ for shape in shapetypes:
               pre10 = source10.iloc[:, [0,2,3,4,5,6,7,8]]
 
               # Isolate data columns and rename with '10' suffix.
-              data10 = source10.iloc[:, 9:].add_suffix("_10")
+              data10 = source10.iloc[:, 8:].add_suffix("10")
 
               # Join renamed.
               proc10 = pre10.join(data10)
@@ -110,7 +110,7 @@ for shape in shapetypes:
               pre15 = source15.iloc[:, [0,2,3,4,5,6,7]]
 
               # Isolate data columns and rename with '15' suffix.
-              data15 = source15.iloc[:, 8:].add_suffix("_15")
+              data15 = source15.iloc[:, 8:].add_suffix("15")
 
               # Join renamed.
               proc15 = pre15.join(data15)
@@ -132,8 +132,8 @@ for shape in shapetypes:
                       metros = proc.loc[:, ['msaid15', 'msaname15', 'countyfips', 'statefips', 'stateusps', 'in100']]
                       metros = metros.drop_duplicates(subset=['msaid15'], keep='first')
                       # Add a column for whether it's a dual-state metro area.
-                      metros['dual_st'] = metros['msaname15'].str.contains(',\s[A-Z]{2}-[A-Z]{2}', regex=True)
-                      metros['dual_st'] = metros['dual_st'].fillna(0).astype(int)
+                      metros['dual'] = metros['msaname15'].str.contains(',\s[A-Z]{2}-[A-Z]{2}', regex=True)
+                      metros['dual'] = metros['dual'].fillna(0).astype(int)
                       metros.rename(columns={'msaid15': 'GEOID'}, inplace=True)
                       # Type as number because we're getting mismatches.
                       metros['GEOID'] = metros['GEOID'].astype(str)

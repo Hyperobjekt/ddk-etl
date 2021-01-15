@@ -54,6 +54,7 @@ for shape in shapetypes:
                         source['column'] = source['column'].str.replace('z', 'z_')
                         print('Prefixed zscores column column.')
                         print(source.head())
+                        source = source[['column', 'type', 'label', 'description']]
                     # raw, prefix with "r_"
                     if (csv == 'raw'):
                         source['column'] = 'r_' + source['column'].astype(str)
@@ -61,8 +62,8 @@ for shape in shapetypes:
                         # source = source.rename(columns=REPLACE_RAW_DICT)
                         print('Prefixed raw column column.')
                         print(source.head())
-                    source = source[['column', 'type', 'label', 'description']]
-                source = source.drop([0,1,2,3,4,5,6,7,8,9])
+                        source = source[['column', 'type', 'label', 'description', 'indicator',	'min', 'mean', 'max', 'decimals', 'currency', 'alt_units', 'high_is_good']]
+                source = source.drop([0,1,2,3,4,5,6,7,8])
                 # print(source.head())
                 source['column'] = source['column'].str.lower()
                 # print(source.head())
@@ -84,6 +85,28 @@ dict = dictionary.to_dict('records')
 for item in dict:
     en_US[item['column']] = item['label']
     en_US[f"{item['column']}_desc"] = item['description']
+
+# Build a map of indicators to publish for use when building indicator lists.
+indicators = []
+for item in dict:
+  if (item['indicator'] == 1):
+    print('Processing indicator item.')
+    print(item)
+    obj = {}
+    obj['id'] = item['column']
+    obj['min'] = item['min']
+    obj['max'] = item['max']
+    obj['mean'] = item['mean']
+    obj['dec'] = item['decimals']
+    obj['curr'] = item['currency']
+    obj['alt_u'] = item['alt_units']
+    obj['high_is_good'] = item['high_is_good']
+    indicators.append(obj)
+print('indicators = ')
+print(indicators)
+with open(OUTPUT_DIR + '/helpers/indicators.json','w') as f:
+    json.dump(indicators,f)
+
 # Add state names
 states = pd.read_csv(f'{OUTPUT_DIR}/{STATES_PROC}.csv')
 states = states.to_dict('records')

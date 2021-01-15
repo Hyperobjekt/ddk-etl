@@ -31,7 +31,7 @@ const output_dir = 'proc'
 // const tracts_geo_source = `./geojson/tracts.geojson`
 const tracts_geo_source = `./proc/geojson/tracts.geojson`
 const tracts_data_source = `./${output_dir}/pop.json`
-const pop_cols = ['ai_10','ap_10','b_10','hi_10','w_10','ai_15','ap_15','b_15','hi_15','w_15']
+const pop_cols = ['ai10','ap10','b10','hi10','w10','ai15','ap15','b15','hi15','w15']
 
 let notFound = []; // Tracks the number of tracts not found in feature set.
 let features;

@@ -22,9 +22,15 @@ MAPBOX_USER=$(if [ ! -z "${MAPBOX_USERNAME}" ]; then echo "${MAPBOX_USERNAME}"; 
 MAPBOX_TKN=$(if [ ! -z "${MAPBOX_TOKEN}" ]; then echo "${MAPBOX_TOKEN}"; else echo ""; fi)
 # Data version
 DATA_VERSION=$(if [ ! -z "${DATA_VERSION}" ]; then echo "${DATA_VERSION}"; else echo 1.0.0; fi)
-
+# Should the script upload mapbox shapes?
+DEPLOY_SHAPES=$(if [ ! -z "${UPLOAD_MAPBOX_SHAPES}" ]; then echo "${UPLOAD_MAPBOX_SHAPES}"; else echo 0; fi)
+# Should the script upload mapbox points?
+DEPLOY_POINTS=$(if [ ! -z "${UPLOAD_MAPBOX_POINTS}" ]; then echo "${UPLOAD_MAPBOX_POINTS}"; else echo 0; fi)
 # Print extra debug info?
 DEBUG=$(if [ "${DEBUG}" -eq 1 ]; then echo 1; else echo 0; fi)
+
+startDate=`date +"%Y-%m-%d %T"`
+echo "Starting build run: ${startDate}"
 
 # Clean up files before starting. Helpful if you're running scripts locally.
 if [[ $SHOULD_CLEAN -eq 1 ]]; then
@@ -95,7 +101,7 @@ if [ ! -z $SHOULD_BUILD ]; then
       echo "Mapbox token or Mapbox username not provided. You need to get that into the .env file  before you can build the tilesets."
     else
       # Generate tilesets.
-      bash ./scripts/generate_tilesets.sh $SHOULD_BUILD $DATA_VERSION $DEBUG
+      bash ./scripts/generate_tilesets.sh $SHOULD_BUILD $DATA_VERSION $DEPLOY_SHAPES $DEPLOY_POINTS $DEBUG
     fi
 
     # Deploy the data that was built.
@@ -109,11 +115,18 @@ if [ ! -z $SHOULD_BUILD ]; then
         echo "Here's what's in ./geojson:"
         tree ./geojson
       fi
+      # Remove geojson files before uploading.
+      rm -rf ./proc/geojson/*
       # Deploy files into the appropriate version directory.
       aws s3 cp --recursive ./proc s3://ddk-source/proc/${DATA_VERSION}/ \
        --acl=public-read \
        --region=us-east-1 \
 		   --cache-control max-age=2628000
     fi
+
+    finishDate=`date +"%Y-%m-%d %T"`
+    echo "Build run complete: ${finishDate}"
+    execution_time=`date -u -d @$(($(date -d "${finishDate}" '+%s') - $(date -d "${startDate}" '+%s'))) '+%H:%M'`
+    echo "Execution time: ${execution_time}"
 
 fi

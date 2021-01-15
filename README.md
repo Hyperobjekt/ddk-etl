@@ -27,7 +27,7 @@ e.g. `docker run hyperobjekt/ddk-etl`
 docker build -t hyperobjekt/ddk-etl .
 # Run
 docker run --env-file .env hyperobjekt/ddk-etl
-docker run -m 100G --env-file .env hyperobjekt/ddk-etl
+# docker run -m 100G --env-file .env hyperobjekt/ddk-etl # Force more memory
 # List containers
 docker container list
 # Prune images
@@ -63,7 +63,6 @@ AWS_SECRET_KEY=... # AWS Secret Key
 MAPBOX_USERNAME=... # Mapbox username
 MAPBOX_TOKEN=... # Mapbox token
 DATA_VERSION=1.0.0 # Data version (fetched from github repo tags when writing .env), use semantic versioning
-DEBUG=1 # Boolean
 DEPLOY=0 # Boolean, cp processed files to AWS S3 bucket, disable for faster testing.
 CLEAN=1 # Clean up before starting. Use if you're testing scripts locally.
 BUILD_GEOJSON=0 # Boolean. Build geojson from census data? Don't need to do this every time.
@@ -71,4 +70,11 @@ BUILD_TYPES=tracts,states # Comma-delineated string of shape types to download a
 BUILD_DICT=1 # Build dictionary files?
 BUILD_METRO_LIST=1 # Build list of featured metros?
 BAR_CHARTS=1 # Process bar charts data?
+UPLOAD_MAPBOX_SHAPES=1 # Disable (0) to reduce use of upload API
+UPLOAD_MAPBOX_POINTS=1 # Disable (0) to reduce use of upload API
+DEBUG=1 # Boolean, display additional debugging info
 ```
+
+## Builds
+
+Builds of the docker image are triggered by commits to branch `trigger-build`.
