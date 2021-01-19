@@ -94,7 +94,7 @@ for item in dict:
     print(item)
     obj = {}
     obj['id'] = item['column']
-    obj['type'] = item['column'].str.slice(start=1, stop=2)
+    obj['type'] = item['column'].slice(start=1, stop=2)
     obj['min'] = item['min']
     obj['max'] = item['max']
     obj['mean'] = item['mean']
