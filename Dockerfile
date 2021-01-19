@@ -44,7 +44,14 @@ ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
 RUN node --version
 RUN npm --version
 
-RUN npm install -g mapshaper csv2geojson @turf/turf JSONStream event-stream aws-sdk axios
+RUN npm install -g mapshaper
+# RUN npm install -g csv2geojson
+RUN npm install -g @turf/turf
+# RUN npm install -g JSONStream
+# RUN npm install -g event-stream
+RUN npm install -g aws-sdk
+RUN npm install -g axios
+
 
 COPY . /app
 WORKDIR /app/
