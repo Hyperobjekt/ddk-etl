@@ -12,11 +12,11 @@ version=$2
 # Deploy shapes to mapbox?
 deploy_shapes=$3
 echo "deploy_shapes:"
-echo deploy_shapes
+echo ${deploy_shapes}
 # Deploy points to mapbox?
 deploy_points=$4
 echo "deploy_points:"
-echo deploy_points
+echo ${deploy_points}
 # Are we debugging?
 debug=$5
 
