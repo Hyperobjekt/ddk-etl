@@ -12,20 +12,22 @@ SHOULD_GEOJSON=$(if [ "${BUILD_GEOJSON}" -eq 1 ]; then echo 1; else echo 0; fi)
 # ex: BUILD_TYPES=tracts,states
 SHOULD_BUILD=$(if [ ! -z "${BUILD_TYPES}" ]; then echo "${BUILD_TYPES}"; else echo "tracts"; fi)
 # Whether or not to fetch and process bar chart data. Boolean.
-SHOULD_BARCHART=$(if [ ! -z "${BAR_CHARTS}" ]; then echo "${BAR_CHARTS}"; else echo 1; fi)
+# SHOULD_BARCHART=$(if [ ! -z "${BAR_CHARTS}" ]; then echo "${BAR_CHARTS}"; else echo 1; fi)
+SHOULD_BARCHART=$(if [ "${BAR_CHARTS}" -eq 1 ]; then echo 1; else echo 0; fi)
 # Build dictionaries list of strings. Boolean.
 # SHOULD_DICT=$(if [ ! -z "${BUILD_DICT}" ]; then echo "${BUILD_DICT}"; else echo 0; fi)
 # Build metro list. Boolean.
-SHOULD_METRO=$(if [ ! -z "${BUILD_METRO_LIST}" ]; then echo "${BUILD_METRO_LIST}"; else echo 0; fi)
+# SHOULD_METRO=$(if [ ! -z "${BUILD_METRO_LIST}" ]; then echo "${BUILD_METRO_LIST}"; else echo 0; fi)
+SHOULD_METRO=$(if [ "${BUILD_METRO_LIST}" -eq 1 ]; then echo 1; else echo 0; fi)
 # Mapbox username and token for building tilesets.
 MAPBOX_USER=$(if [ ! -z "${MAPBOX_USERNAME}" ]; then echo "${MAPBOX_USERNAME}"; else echo ""; fi)
 MAPBOX_TKN=$(if [ ! -z "${MAPBOX_TOKEN}" ]; then echo "${MAPBOX_TOKEN}"; else echo ""; fi)
 # Data version
 DATA_VERSION=$(if [ ! -z "${DATA_VERSION}" ]; then echo "${DATA_VERSION}"; else echo 1.0.0; fi)
 # Should the script upload mapbox shapes?
-DEPLOY_SHAPES=$(if [ ! -z "${UPLOAD_MAPBOX_SHAPES}" ]; then echo "${UPLOAD_MAPBOX_SHAPES}"; else echo 0; fi)
+DEPLOY_SHAPES=$(if [ "${UPLOAD_MAPBOX_SHAPES}" -eq 1 ]; then echo 1; else echo 0; fi)
 # Should the script upload mapbox points?
-DEPLOY_POINTS=$(if [ ! -z "${UPLOAD_MAPBOX_POINTS}" ]; then echo "${UPLOAD_MAPBOX_POINTS}"; else echo 0; fi)
+DEPLOY_POINTS=$(if [ "${UPLOAD_MAPBOX_POINTS}" -eq 1 ]; then echo 1; else echo 0; fi)
 # Print extra debug info?
 DEBUG=$(if [ "${DEBUG}" -eq 1 ]; then echo 1; else echo 0; fi)
 
@@ -60,7 +62,7 @@ if [ ! -z $SHOULD_BUILD ]; then
 
     # Fetch source geojson.
     echo "Fetching source geojson."
-    if [[ $SHOULD_GEOJSON -eq 1 ]]; then
+    if [ $SHOULD_GEOJSON -eq 1 ]; then
       # If deploy, upload files.
       make -f ./scripts/fetch_geo.mk all deploy
     fi
@@ -82,7 +84,7 @@ if [ ! -z $SHOULD_BUILD ]; then
     # ex: python3 ./scripts/build_dictionary.py tracts 1
     python3 ./scripts/build_dictionary.py $SHOULD_BUILD $DEBUG
 
-    if [ ! -z $SHOULD_BARCHART ]; then
+    if [[ $SHOULD_BARCHART -eq 1 ]]; then
       # Generate barchart data.
       echo "Building dictionary data into string set."
       # ex: python3 ./scripts/process_barchart_data.py 1
