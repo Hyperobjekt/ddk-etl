@@ -28,6 +28,10 @@ DATA_VERSION=$(if [ ! -z "${DATA_VERSION}" ]; then echo "${DATA_VERSION}"; else 
 DEPLOY_SHAPES=$(if [ "${UPLOAD_MAPBOX_SHAPES}" -eq 1 ]; then echo 1; else echo 0; fi)
 # Should the script upload mapbox points?
 DEPLOY_POINTS=$(if [ "${UPLOAD_MAPBOX_POINTS}" -eq 1 ]; then echo 1; else echo 0; fi)
+# Get the year of mapbox points to generate (for splitting jobs up).
+POINTS_YEAR=$(if [ ! -z "${MAPBOX_POINTS_YEAR}" ]; then echo "${MAPBOX_POINTS_YEAR}"; else echo "10"; fi)
+# Demographics to loop through when generating point features.
+POINTS_DEMOGRAPHICS=$(if [ ! -z "${MAPBOX_POINTS_DEMOGRAPHICS}" ]; then echo "${MAPBOX_POINTS_DEMOGRAPHICS}"; else echo "ai,ap,b,hi,w"; fi)
 # Print extra debug info?
 DEBUG=$(if [ "${DEBUG}" -eq 1 ]; then echo 1; else echo 0; fi)
 
@@ -91,19 +95,25 @@ if [ ! -z $SHOULD_BUILD ]; then
       python3 ./scripts/process_barchart_data.py $DEBUG
     fi
 
-    # Merge data with geojson.
-    # ex: bash ./scripts/join_geojson.sh tracts 1
-    bash ./scripts/join_geojson.sh $SHOULD_BUILD $DEBUG
+    if [[ $DEPLOY_SHAPES -eq 1 ]]; then
+      # Merge data with geojson.
+      # ex: bash ./scripts/join_geojson.sh tracts 1
+      bash ./scripts/join_geojson.sh $SHOULD_BUILD $DEBUG
+    fi
 
-    # Generate points for population data.
-    node ./scripts/generate_points.js
+
+    if [[ $DEPLOY_POINTS -eq 1 ]]; then
+      # Generate points for population data.
+      node ./scripts/generate_points.js $POINTS_YEAR $POINTS_DEMOGRAPHICS
+    fi
 
     # Build tilesets.
     if [[ -z "${MAPBOX_TKN}" ]] || [[ -z "${MAPBOX_USER}" ]]; then
       echo "Mapbox token or Mapbox username not provided. You need to get that into the .env file  before you can build the tilesets."
     else
       # Generate tilesets.
-      bash ./scripts/generate_tilesets.sh $SHOULD_BUILD $DATA_VERSION $DEPLOY_SHAPES $DEPLOY_POINTS $DEBUG
+      # TODO: UPDATE THIS SCRIPT TO ONLY PROCESS ONE YEAR AND THE LIST OF DEMOGRAPHICS.
+      bash ./scripts/generate_tilesets.sh $SHOULD_BUILD $DATA_VERSION $DEPLOY_SHAPES $DEPLOY_POINTS $POINTS_YEAR $POINTS_DEMOGRAPHICS $DEBUG
     fi
 
     # Deploy the data that was built.

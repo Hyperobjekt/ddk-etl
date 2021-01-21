@@ -17,14 +17,18 @@ echo ${deploy_shapes}
 deploy_points=$4
 echo "deploy_points:"
 echo ${deploy_points}
-# Are we debugging?
-debug=$5
-
-# Types of points (as sources)
-point_types=( ai ap b hi w )
-
 # Types of point years (for sources)
-years=( 10 15 )
+# years=( 10 15 )
+year=$5
+# Types of points (as sources)
+# point_types=( ai ap b hi w )
+point_types=(`echo $6 | tr ',' ' '`)
+# Are we debugging?
+debug=$7
+
+
+
+
 
 # Max and min zoom
 min_zoom=3
@@ -71,9 +75,9 @@ fi
 
 if [[ $deploy_points -eq 1 ]]; then
   # Build tilesets for points.
-  for year in "${years[@]}"
-  do
-    echo "Processing year ${year}."
+  # for year in "${years[@]}"
+  # do
+    echo "Processing points for year ${year}."
     # year_list=""
 
     for type in "${point_types[@]}"
@@ -99,7 +103,7 @@ if [[ $deploy_points -eq 1 ]]; then
     # Deploy the white people all by themselves.
     # node ./scripts/deploy_tileset.js "./mbtiles/points_w${year}.mbtiles" "points_w${year}_${version}"
 
-  done
+  # done
 fi
 
 if [[ $DEBUG -eq 1 ]]; then

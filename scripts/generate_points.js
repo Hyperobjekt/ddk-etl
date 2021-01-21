@@ -31,7 +31,19 @@ const output_dir = 'proc'
 // const tracts_geo_source = `./geojson/tracts.geojson`
 const tracts_geo_source = `./proc/geojson/tracts.geojson`
 const tracts_data_source = `./${output_dir}/pop.json`
-const pop_cols = ['ai10','ap10','b10','hi10','w10','ai15','ap15','b15','hi15','w15']
+// const pop_cols = ['ai10','ap10','b10','hi10','w10','ai15','ap15','b15','hi15','w15']
+
+// Year and demographics are passed in as arguments.
+const points_year = process.argv[2]
+console.log('points_year, ', points_year)
+const demographics = String(process.argv[3]).split(',')
+console.log('demographics, ', demographics)
+// Year and demographics are used to construct the list of columns to process in each row.
+const pop_cols = []
+demographics.forEach(dem => {
+  pop_cols.push(`${dem}${points_year}`)
+})
+console.log('pop_cols, ', pop_cols)
 
 let notFound = []; // Tracks the number of tracts not found in feature set.
 let features;
