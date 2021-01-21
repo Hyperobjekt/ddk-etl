@@ -24,10 +24,11 @@ The entire chain of scripts runs from entrypoint `./build.sh`, as indicated in t
 
 ## Contributing
 
-- Builds of the docker image are triggered by commits to branch `trigger-build`.
-- Check out your working branch off of `master`.
-- Build and run the docker image locally for testing.
-- When you are ready to build the new image, merge your work back into `master`, then merge `master` into `trigger-build`. Push `trigger-build` to `origin` and watch the build progress in DockerHub.
+Builds of the docker image are triggered by commits to branch `trigger-build`.
+
+1. Check out your working branch off of `master`.
+2. Build and run the docker image locally for testing. # :fire::fire: Before testing, check [the DiversityDataKids data repository](https://github.com/Hyperobjekt/ddk-data) tags and be sure you aren't setting a data version in your `.env` file that would override files that are in use! :fire::fire:
+3. When you are ready to build the new image, merge your work back into `master`, then merge `master` into `trigger-build`. Push `trigger-build` to `origin` and watch the build progress in DockerHub.
 
 ### Useful Docker Commands
 
@@ -65,7 +66,7 @@ AWS_ACCESS_ID=... # AWS Access ID
 AWS_SECRET_KEY=... # AWS Secret Key
 MAPBOX_USERNAME=... # Mapbox username
 MAPBOX_TOKEN=... # Mapbox token
-DATA_VERSION=1.0.0 # Data version (fetched from github repo tags when writing .env), use semantic versioning. :fire::fire: Check [the DiversityDataKids data repository](https://github.com/Hyperobjekt/ddk-data) and be sure you aren't overwriting a data version that's in use! :fire::fire:
+DATA_VERSION=1.0.0 # Data version (fetched from github repo tags when writing .env), use semantic versioning.
 DEPLOY=0 # Boolean, cp processed files to AWS S3 bucket, disable for faster testing.
 CLEAN=1 # Clean up before starting. Use if you're testing scripts locally.
 BUILD_GEOJSON=0 # Boolean. Build geojson from census data? Don't need to do this every time.
