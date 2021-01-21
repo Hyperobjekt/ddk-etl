@@ -1,33 +1,41 @@
-# Tasks
+# DiversityDataKids Map App Data Processing Pipeline
 
-## Initial
+The Docker image built from this repository processes data for consumption by the DiversityDataKids map app.
 
-1. Dockerfile: setup a docker environment containing the required build environment for data files and tilesets. Build the local Dockerfile with: `docker build -t hyperobjekt/ddk-etl .`
+## What does it do?
 
-2. Source storage setup: setup a place (e.g. AWS bucket) to store the "source" files for the pipeline (e.g. tract geojson, data source files)
+1. Optionally fetches and processes shapefiles from census.gov
+2. Processes a series of CSVs into:
+  - CSVs
+  - JSON
+  - GeoJSON
+3. Merges processed data into GeoJSON feature collections
+4. Converts GeoJSON to Mapbox tilesets
+5. Generates point density data, in the form of GeoJSON point feature collections, for indicated demographics
+6. Converts point feature GeoJSON to Mapbox tilesets
+7. Uploads Mapbox tilesets to Mapbox
+8. Uploads remaining CSV and JSON files to AWS bucket
 
-3. Add source files to source bucket:
+## When does it run?
 
-   - GeoJSON for tracts
-   - Data for tracts
-   - Data for dot density layers
+Full and partial Github Action runs of this Docker image are triggered from [the DiversityDataKids data repository](https://github.com/Hyperobjekt/ddk-data). Full runs (data files and tilesets) are triggered by pushing a new tag to that repository. Partial runs (data files only) are triggered by pushing a new commit to branch `build-data-only`.
 
-4. Write makefile / scripts that:
-   - download source data / geojson from source bucket (`wget` or `aws cp`)
-   - join data into geojson files (see [tippecanoe-json-tool](https://github.com/mapbox/tippecanoe#tippecanoe-json-tool))
-   - generate tilesets (`.mbtiles`) from geojson files with data (see [tippecanoe](https://github.com/mapbox/tippecanoe))
-   - deploy generated tilesets to mapbox (see `deploy_tilesets` [make command](https://github.com/Hyperobjekt/seda-etl/blob/master/Makefile#L465) and [deploy script](https://github.com/Hyperobjekt/seda-etl/blob/master/scripts/deploy_tilesets.js))
+The entire chain of scripts runs from entrypoint `./build.sh`, as indicated in the `Dockerfile`.
 
-the entire chain of scripts should be run from `./build.sh` so that running the dockerfile completes the entire build.
+## Contributing
 
-e.g. `docker run hyperobjekt/ddk-etl`
+- Builds of the docker image are triggered by commits to branch `trigger-build`.
+- Check out your working branch off of `master`.
+- Build and run the docker image locally for testing.
+- When you are ready to build the new image, merge your work back into `master`, then merge `master` into `trigger-build`. Push `trigger-build` to `origin` and watch the build progress in DockerHub.
+
+### Useful Docker Commands
 
 ```bash
 # Build
 docker build -t hyperobjekt/ddk-etl .
 # Run
 docker run --env-file .env hyperobjekt/ddk-etl
-# docker run -m 100G --env-file .env hyperobjekt/ddk-etl # Force more memory
 # List containers
 docker container list
 # Prune images
@@ -46,11 +54,6 @@ docker logs [containername] > ~/Desktop/docker-logs.log
 
 - `--env-file` indicates the `.env` file to pass to Docker
 
-## Future
-
-- Add docker image to dockerhub
-- Setup AWS Batch (or other container service) to automatically build on source changes
-
 ### Configuration
 
 Configure the pipeline using the `.env` file:
@@ -62,7 +65,7 @@ AWS_ACCESS_ID=... # AWS Access ID
 AWS_SECRET_KEY=... # AWS Secret Key
 MAPBOX_USERNAME=... # Mapbox username
 MAPBOX_TOKEN=... # Mapbox token
-DATA_VERSION=1.0.0 # Data version (fetched from github repo tags when writing .env), use semantic versioning
+DATA_VERSION=1.0.0 # Data version (fetched from github repo tags when writing .env), use semantic versioning. :fire::fire: Check [the DiversityDataKids data repository](https://github.com/Hyperobjekt/ddk-data) and be sure you aren't overwriting a data version that's in use! :fire::fire:
 DEPLOY=0 # Boolean, cp processed files to AWS S3 bucket, disable for faster testing.
 CLEAN=1 # Clean up before starting. Use if you're testing scripts locally.
 BUILD_GEOJSON=0 # Boolean. Build geojson from census data? Don't need to do this every time.
@@ -76,7 +79,3 @@ MAPBOX_POINTS_YEAR=10 # Year of points to generate, for splitting into several j
 MAPBOX_POINTS_DEMOGRAPHICS=ai,ap,b,hi,w # Which demographics to use for point generation.
 DEBUG=1 # Boolean, display additional debugging info
 ```
-
-## Builds
-
-Builds of the docker image are triggered by commits to branch `trigger-build`.

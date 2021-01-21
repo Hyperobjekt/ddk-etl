@@ -12,12 +12,8 @@ SHOULD_GEOJSON=$(if [ "${BUILD_GEOJSON}" -eq 1 ]; then echo 1; else echo 0; fi)
 # ex: BUILD_TYPES=tracts,states
 SHOULD_BUILD=$(if [ ! -z "${BUILD_TYPES}" ]; then echo "${BUILD_TYPES}"; else echo "tracts"; fi)
 # Whether or not to fetch and process bar chart data. Boolean.
-# SHOULD_BARCHART=$(if [ ! -z "${BAR_CHARTS}" ]; then echo "${BAR_CHARTS}"; else echo 1; fi)
 SHOULD_BARCHART=$(if [ "${BAR_CHARTS}" -eq 1 ]; then echo 1; else echo 0; fi)
-# Build dictionaries list of strings. Boolean.
-# SHOULD_DICT=$(if [ ! -z "${BUILD_DICT}" ]; then echo "${BUILD_DICT}"; else echo 0; fi)
 # Build metro list. Boolean.
-# SHOULD_METRO=$(if [ ! -z "${BUILD_METRO_LIST}" ]; then echo "${BUILD_METRO_LIST}"; else echo 0; fi)
 SHOULD_METRO=$(if [ "${BUILD_METRO_LIST}" -eq 1 ]; then echo 1; else echo 0; fi)
 # Mapbox username and token for building tilesets.
 MAPBOX_USER=$(if [ ! -z "${MAPBOX_USERNAME}" ]; then echo "${MAPBOX_USERNAME}"; else echo ""; fi)
@@ -95,12 +91,8 @@ if [ ! -z $SHOULD_BUILD ]; then
       python3 ./scripts/process_barchart_data.py $DEBUG
     fi
 
-    # if [[ $DEPLOY_SHAPES -eq 1 ]]; then
-      # Merge data with geojson.
-      # ex: bash ./scripts/join_geojson.sh tracts 1
-      bash ./scripts/join_geojson.sh $SHOULD_BUILD $DEBUG
-    # fi
-
+    # Merge data with geojson.
+    bash ./scripts/join_geojson.sh $SHOULD_BUILD $DEBUG
 
     if [[ $DEPLOY_POINTS -eq 1 ]]; then
       # Generate points for population data.

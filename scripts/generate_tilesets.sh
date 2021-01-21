@@ -26,10 +26,6 @@ point_types=(`echo $6 | tr ',' ' '`)
 # Are we debugging?
 debug=$7
 
-
-
-
-
 # Max and min zoom
 min_zoom=3
 max_zoom=10 # Above 10 = increased processing and hosting costs.
@@ -75,35 +71,16 @@ fi
 
 if [[ $deploy_points -eq 1 ]]; then
   # Build tilesets for points.
-  # for year in "${years[@]}"
-  # do
-    echo "Processing points for year ${year}."
-    # year_list=""
+  echo "Processing points for year ${year}."
 
-    for type in "${point_types[@]}"
-    do
-      echo "Generating tileset for for ${type}${year}."
-      # Create tileset from points geojson file.
-      tippecanoe -Z${min_zoom} -z${max_zoom} -o ./mbtiles/points_${type}${year}.mbtiles -l ${type} --generate-ids --no-feature-limit --drop-densest-as-needed --force ./${OUTPUT_DIR}/geojson/points_${type}${year}.geojson
-      # Deploy tileset with version number.
-      node ./scripts/deploy_tileset.js "./mbtiles/points_${type}${year}.mbtiles" "points_${type}${year}_${version}"
-      # Create a list of all files to join (exclude white people).
-      # if [[ $type != 'w' ]]
-      # then
-      #   echo "Adding tileset points_${type}${year} to year_list."
-      #   year_list+="./mbtiles/points_${type}${year}.mbtiles "
-      # fi
-    done
-
-    # echo "Attempting to join the following tiles: ${year_list}."
-    # Merge all files for that year together.
-    # tile-join -pk -o ./mbtiles/points_${year}_${version}.mbtiles ${year_list}
-    # Deploy tileset for year, everyone but white people.
-    # node ./scripts/deploy_tileset.js "./mbtiles/points_${year}_${version}.mbtiles" "points_${year}_${version}"
-    # Deploy the white people all by themselves.
-    # node ./scripts/deploy_tileset.js "./mbtiles/points_w${year}.mbtiles" "points_w${year}_${version}"
-
-  # done
+  for type in "${point_types[@]}"
+  do
+    echo "Generating tileset for for ${type}${year}."
+    # Create tileset from points geojson file.
+    tippecanoe -Z${min_zoom} -z${max_zoom} -o ./mbtiles/points_${type}${year}.mbtiles -l ${type} --generate-ids --no-feature-limit --drop-densest-as-needed --force ./${OUTPUT_DIR}/geojson/points_${type}${year}.geojson
+    # Deploy tileset with version number.
+    node ./scripts/deploy_tileset.js "./mbtiles/points_${type}${year}.mbtiles" "points_${type}${year}_${version}"
+  done
 fi
 
 if [[ $DEBUG -eq 1 ]]; then
