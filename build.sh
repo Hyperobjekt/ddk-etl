@@ -95,11 +95,11 @@ if [ ! -z $SHOULD_BUILD ]; then
       python3 ./scripts/process_barchart_data.py $DEBUG
     fi
 
-    if [[ $DEPLOY_SHAPES -eq 1 ]]; then
+    # if [[ $DEPLOY_SHAPES -eq 1 ]]; then
       # Merge data with geojson.
       # ex: bash ./scripts/join_geojson.sh tracts 1
       bash ./scripts/join_geojson.sh $SHOULD_BUILD $DEBUG
-    fi
+    # fi
 
 
     if [[ $DEPLOY_POINTS -eq 1 ]]; then
