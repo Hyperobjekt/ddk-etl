@@ -77,6 +77,8 @@ for shape in shapetypes:
 for key, value in SEARCH_AND_REPLACE.items():
   dictionary['column'] = dictionary['column'].str.replace(str(key), str(value))
 # print(source.head())
+# Get rid of NaNs
+dictionary.fillna('', inplace=True)
 
 # Build a simple object that lists the variables and their labels and descriptions
 # that can be merged into the i18n us_EN lang object in the app.
