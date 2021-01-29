@@ -69,7 +69,7 @@ SEARCH_AND_REPLACE = {
     'stt': 's',
     'met': 'm',
     # Shorten index prefix
-    'x_c5', 'x',
+    'x_c5': 'x',
     # Remove underscores
     '_': '',
 }
