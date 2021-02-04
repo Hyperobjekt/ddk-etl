@@ -173,6 +173,11 @@ for shape in shapetypes:
         tracts.to_csv(f'{OUTPUT_DIR}/tracts.csv', index=False)
         tracts.to_json(f'{OUTPUT_DIR}/tracts.json', 'records')
 
+        # Make a smaller set for download.
+        tracts_sm = shape_all[TRACT_APP_COLS]
+        tracts_sm.to_csv(f'{OUTPUT_DIR}/tracts-sm.csv', index=False)
+        tracts_sm.to_json(f'{OUTPUT_DIR}/tracts-sm.json', 'records')
+
         # Also write combined dataframe for all included CSV files to CSV and JSON files.
         shape_all.to_csv(f'{OUTPUT_DIR}/{shape}-all-data.csv', index=False)
         shape_all.to_json(f'{OUTPUT_DIR}/{shape}-all-data.json', 'records')

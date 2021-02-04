@@ -50,7 +50,7 @@ if [[ $deploy_shapes -eq 1 ]]; then
   # Build tilesets for shapes.
   # tracts
   echo "Building tileset for tracts."
-  tippecanoe -Z${min_zoom} -z${max_zoom} -l tracts -o "./mbtiles/tracts_${version}.mbtiles" -x GEO_ID -x STATE -x COUNTY -x TRACT -x NAME -x LSAD -x CENSUSAREA --no-feature-limit --drop-densest-as-needed --coalesce-densest-as-needed --use-attribute-for-id=GEOID --convert-stringified-ids-to-numbers --force "./${OUTPUT_DIR}/geojson/tracts.geojson"
+  tippecanoe -Z${min_zoom} -z${max_zoom} -l tracts -o "./mbtiles/tracts_${version}.mbtiles" -x GEO_ID -x STATE -x COUNTY -x TRACT -x NAME -x LSAD -x CENSUSAREA --no-feature-limit --coalesce-densest-as-needed --use-attribute-for-id=GEOID --convert-stringified-ids-to-numbers --force "./${OUTPUT_DIR}/geojson/tracts.geojson"
   # Deploy the tracts file.
   node ./scripts/deploy_tileset.js "./mbtiles/tracts_${version}.mbtiles" "tracts_${version}"
   # states
