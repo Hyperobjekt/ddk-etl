@@ -50,7 +50,9 @@ if [[ $deploy_shapes -eq 1 ]]; then
   # Build tilesets for shapes.
   # tracts
   echo "Building tileset for tracts."
-  tippecanoe -Z5 -z${max_zoom} -l tracts -o "./mbtiles/tracts_${version}.mbtiles" -x GEO_ID -x STATE -x COUNTY -x TRACT -x NAME -x LSAD -x CENSUSAREA --no-feature-limit --drop-densest-as-needed --coalesce-densest-as-needed --use-attribute-for-id=GEOID --convert-stringified-ids-to-numbers --force "./${OUTPUT_DIR}/geojson/tracts.geojson"
+  tippecanoe -Z${min_zoom} -z${max_zoom} -l tracts -o "./mbtiles/tracts_${version}.mbtiles" -x GEO_ID -x STATE -x COUNTY -x TRACT -x NAME -x LSAD -x CENSUSAREA --no-feature-limit --drop-densest-as-needed --coalesce-densest-as-needed --use-attribute-for-id=GEOID --convert-stringified-ids-to-numbers --force "./${OUTPUT_DIR}/geojson/tracts.geojson"
+  # Deploy the tracts file.
+  node ./scripts/deploy_tileset.js "./mbtiles/tracts_${version}.mbtiles" "tracts_${version}"
   # states
   echo "Building tileset for states."
   tippecanoe -Z${min_zoom} -z${max_zoom} -o "./mbtiles/states_${version}.mbtiles" -l states -x GEO_ID -x STATE -x NAME -x name -x LSAD -x CENSUSAREA --simplification=8 --drop-densest-as-needed --use-attribute-for-id=GEOID --convert-stringified-ids-to-numbers --force "./${OUTPUT_DIR}/geojson/states.geojson"
@@ -58,8 +60,10 @@ if [[ $deploy_shapes -eq 1 ]]; then
   echo "Building tileset for metros."
   tippecanoe -Z${min_zoom} -z${max_zoom} -o "./mbtiles/metros_${version}.mbtiles" -l metros -x GEO_ID -x CENSUSAREA -x LSAD -x msaname15 -x NAME --drop-densest-as-needed --use-attribute-for-id=GEOID --convert-stringified-ids-to-numbers --force "./${OUTPUT_DIR}/geojson/metros.geojson"
   # Join tracts, states, and metros.
-  echo "Beginning join operation for tracts, states, and metros."
-  tile-join -pk -o ./mbtiles/shapes_${version}.mbtiles ./mbtiles/tracts_${version}.mbtiles ./mbtiles/states_${version}.mbtiles ./mbtiles/metros_${version}.mbtiles
+  # echo "Beginning join operation for tracts, states, and metros."
+  # tile-join -pk -o ./mbtiles/shapes_${version}.mbtiles ./mbtiles/tracts_${version}.mbtiles ./mbtiles/states_${version}.mbtiles ./mbtiles/metros_${version}.mbtiles
+  echo "Beginning join operation for states and metros."
+  tile-join -pk -o ./mbtiles/shapes_${version}.mbtiles ./mbtiles/states_${version}.mbtiles ./mbtiles/metros_${version}.mbtiles
   # Deploy the combined file.
   node ./scripts/deploy_tileset.js "./mbtiles/shapes_${version}.mbtiles" "shapes_${version}"
 
