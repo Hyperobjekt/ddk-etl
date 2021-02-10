@@ -28,18 +28,19 @@ const turf = require("@turf/turf");
 
 const source_dir = 'source'
 const output_dir = 'proc'
-const tracts_geo_source = `./proc/geojson/tracts.geojson`
-const tracts_data_source = `./${output_dir}/pop.json`
-
 // Year and demographics are passed in as arguments.
 const points_year = process.argv[2]
 console.log('points_year, ', points_year)
 const demographics = String(process.argv[3]).split(',')
 console.log('demographics, ', demographics)
+// Source files
+const tracts_geo_source = `./${output_dir}/geojson/tracts${points_year}.geojson`
+const tracts_data_source = `./${output_dir}/pop${points_year}.json`
+
 // Year and demographics are used to construct the list of columns to process in each row.
 const pop_cols = []
 demographics.forEach(dem => {
-  pop_cols.push(`${dem}${points_year}`)
+  pop_cols.push(`${dem}`)
 })
 console.log('pop_cols, ', pop_cols)
 
@@ -53,10 +54,11 @@ pop_cols.forEach(col => {
   isFirst[col] = 0
 })
 
-const getPoints = ({ GEOID, c, v, m }) => {
+const getPoints = ({ GEOID, c, v, m, s }) => {
   const column = c
   const value = v
   const met = m
+  const state = s
   // console.log('getPoints, ', GEOID, column, value, met)
   // No points to generate, stop.
   if (!value) return '';
@@ -97,7 +99,8 @@ const getPoints = ({ GEOID, c, v, m }) => {
       const randomPoint = turf.point([lng, lat], {
         tract: GEOID,
         type: column,
-        met: met
+        met: met,
+        state: state
       });
 
       if (turf.booleanPointInPolygon(randomPoint, feature)) {
@@ -144,9 +147,9 @@ fs.readFile(tracts_geo_source, 'utf8', (err, data) => {
           // Make files to write to.
           for (var v = 0; v < pop_cols.length; v++) {
             // console.log(`Writing file ${v}`, featureCollectionPrefix)
-            fs.writeFileSync(`./${output_dir}/geojson/points_${pop_cols[v]}.geojson`, featureCollectionPrefix, 'utf8', (err) => {
+            fs.writeFileSync(`./${output_dir}/geojson/points_${pop_cols[v]}${points_year}.geojson`, featureCollectionPrefix, 'utf8', (err) => {
               if (err)
-                console.log(`Error creating demo file ${pop_cols[v]}!`, err)
+                console.log(`Error creating demo file ${pop_cols[v]}${points_year}!`, err)
               else {
                 console.log("File written successfully\n");
               }
@@ -161,11 +164,11 @@ fs.readFile(tracts_geo_source, 'utf8', (err, data) => {
             }
             for (var v = 0; v < pop_cols.length; v++) {
               // const d = rows[b]
-              const p = { GEOID: d.GEOID, c: pop_cols[v], v: d[pop_cols[v]], m: d.msaid15 };
+              const p = { GEOID: d.GEOID, c: pop_cols[v], v: d[pop_cols[v]], m: d.msaid15, s:d.statefips };
               const points = getPoints(p);
               if (points && points.length > 0) {
-                fs.appendFileSync(`./${output_dir}/geojson/points_${pop_cols[v]}.geojson`, points, (err) => {
-                  console.log(`Error creating demo file ${pop_cols[v]}!`, err)
+                fs.appendFileSync(`./${output_dir}/geojson/points_${pop_cols[v]}${points_year}.geojson`, points, (err) => {
+                  console.log(`Error creating demo file ${pop_cols[v]}${points_year}!`, err)
                 })
               } else {
                 // console.log(`Points was null for ${d.GEOID}.`, p)
@@ -174,8 +177,8 @@ fs.readFile(tracts_geo_source, 'utf8', (err, data) => {
           }
           // Append closing info to files.
           for (var v = 0; v < pop_cols.length; v++) {
-            fs.appendFileSync(`./${output_dir}/geojson/points_${pop_cols[v]}.geojson`, featureCollectionSuffix, (err) => {
-              console.log(`Error appending points to demo file ${pop_cols[v]} in row ${b}!`, err)
+            fs.appendFileSync(`./${output_dir}/geojson/points_${pop_cols[v]}${points_year}.geojson`, featureCollectionSuffix, (err) => {
+              console.log(`Error appending points to demo file ${pop_cols[v]}${points_year} in row ${b}!`, err)
             })
           }
         }

@@ -22,6 +22,8 @@ MAPBOX_TKN=$(if [ ! -z "${MAPBOX_TOKEN}" ]; then echo "${MAPBOX_TOKEN}"; else ec
 DATA_VERSION=$(if [ ! -z "${DATA_VERSION}" ]; then echo "${DATA_VERSION}"; else echo 1.0.0; fi)
 # Should the script upload mapbox shapes?
 DEPLOY_SHAPES=$(if [ "${UPLOAD_MAPBOX_SHAPES}" -eq 1 ]; then echo 1; else echo 0; fi)
+# What years of tract shapes to build
+SHAPES_YEARS=$(if [ ! -z "${SHAPES_YEARS}" ]; then echo "${SHAPES_YEARS}"; else echo "10,15"; fi)
 # Should the script upload mapbox points?
 DEPLOY_POINTS=$(if [ "${UPLOAD_MAPBOX_POINTS}" -eq 1 ]; then echo 1; else echo 0; fi)
 # Get the year of mapbox points to generate (for splitting jobs up).
@@ -61,10 +63,13 @@ aws configure set default.region us-east-1
 if [ ! -z $SHOULD_BUILD ]; then
 
     # Fetch source geojson.
-    echo "Fetching source geojson."
     if [ $SHOULD_GEOJSON -eq 1 ]; then
+      echo "Fetching source geojson."
       # If deploy, upload files.
       make -f ./scripts/fetch_geo.mk all deploy
+      echo "Fetching metros geojson."
+      # If deploy, upload files.
+      bash -f ./scripts/fetch_metros_geo.sh $DEBUG
     fi
 
     echo "Downloading processed geojson."
@@ -76,6 +81,8 @@ if [ ! -z $SHOULD_BUILD ]; then
     tree ./source
 
     echo "Preparing source data."
+    # TODO: Add $SHAPES_YEARS to args here and make tract year
+    # point generation dynamic.
     python3 ./scripts/process_shape_data.py $SHOULD_BUILD $SHOULD_METRO $DEBUG
     tree ./source
 
@@ -92,7 +99,7 @@ if [ ! -z $SHOULD_BUILD ]; then
     fi
 
     # Merge data with geojson.
-    bash ./scripts/join_geojson.sh $SHOULD_BUILD $DEBUG
+    bash ./scripts/join_geojson.sh $SHOULD_BUILD $SHAPES_YEARS $DEBUG
 
     if [[ $DEPLOY_POINTS -eq 1 ]]; then
       # Generate points for population data.
@@ -105,7 +112,7 @@ if [ ! -z $SHOULD_BUILD ]; then
     else
       # Generate tilesets.
       # TODO: UPDATE THIS SCRIPT TO ONLY PROCESS ONE YEAR AND THE LIST OF DEMOGRAPHICS.
-      bash ./scripts/generate_tilesets.sh $SHOULD_BUILD $DATA_VERSION $DEPLOY_SHAPES $DEPLOY_POINTS $POINTS_YEAR $POINTS_DEMOGRAPHICS $DEBUG
+      bash ./scripts/generate_tilesets.sh $SHOULD_BUILD $DATA_VERSION $DEPLOY_SHAPES $SHAPES_YEARS $DEPLOY_POINTS $POINTS_YEAR $POINTS_DEMOGRAPHICS $DEBUG
     fi
 
     # Deploy the data that was built.

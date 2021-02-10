@@ -75,6 +75,7 @@ BUILD_DICT=1 # Build dictionary files?
 BUILD_METRO_LIST=1 # Build list of featured metros?
 BAR_CHARTS=1 # Process bar charts data?
 UPLOAD_MAPBOX_SHAPES=1 # Disable (0) to reduce use of upload API
+SHAPES_YEARS=10,15 # What years to build tract tilesets for
 UPLOAD_MAPBOX_POINTS=1 # Disable (0) to reduce use of upload API
 MAPBOX_POINTS_YEAR=10 # Year of points to generate, for splitting into several jobs.
 MAPBOX_POINTS_DEMOGRAPHICS=ai,ap,b,hi,w # Which demographics to use for point generation.

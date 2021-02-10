@@ -20,7 +20,7 @@ OUTPUT_DIR = './proc'
 # print('source dir is ', SOURCE_DIR)
 
 # Get list of files.
-csvs_arr = ['index', 'pop', 'raw', 'zscores'] # shapetypes # os.listdir(SOURCE_DIR)
+csvs_arr = ['index', 'pop', 'raw'] # ['index', 'pop', 'raw', 'zscores'] # shapetypes # os.listdir(SOURCE_DIR)
 states_src = STATES_SRC
 # csvs_arr = [item.replace('.csv', '') for item in csvs_arr]
 # print('csvs_arr is ', csvs_arr)
@@ -34,7 +34,8 @@ if not os.path.exists(f'{OUTPUT_DIR}/helpers'):
 
 # For each file in the array...
 for shape in shapetypes:
-    shape_all = pd.DataFrame()
+    shape_all_10 = pd.DataFrame()
+    shape_all_15 = pd.DataFrame()
     if (shape == 'tracts'):
       for csv in csvs_arr:
           print(f'Processing {csv}.')
@@ -91,15 +92,18 @@ for shape in shapetypes:
               source10 = source[(source["year"] == 2010)]
 
               # Isolate metadata columns.
-              pre10 = source10.iloc[:, [0,2,3,4,5,6,7,8]]
+              pre10 = source10.iloc[:, [0,1,2,3,4,5,6,7,8]]
 
               # Isolate data columns and rename with '10' suffix.
-              data10 = source10.iloc[:, 8:].add_suffix("10")
+              data10 = source10.iloc[:, 9:].round(3)
+
+              # Round data columns to 10 decimal places.
+              # proc10 = source10.iloc[:, 8:].round(3)
 
               # Join renamed.
               proc10 = pre10.join(data10)
-              # print('proc10')
-              # print(proc10.iloc[:,0:15].head())
+              print('proc10')
+              print(proc10.iloc[:,0:15].head())
 
               # Split out 2015 data.
               source15 = source[source['year'] == 2015]
@@ -107,18 +111,21 @@ for shape in shapetypes:
               # print(source15.head())
 
               # Isolate metadata columns.
-              pre15 = source15.iloc[:, [0,2,3,4,5,6,7]]
+              pre15 = source15.iloc[:, [0,1,2,3,4,5,6,7,8]]
 
               # Isolate data columns and rename with '15' suffix.
-              data15 = source15.iloc[:, 8:].add_suffix("15")
+              data15 = source15.iloc[:, 9:].round(3)
+
+              # Round data columns to 10 decimal places.
+              # proc15 = source15.iloc[:, 8:].round(3)
 
               # Join renamed.
               proc15 = pre15.join(data15)
-              # print('proc15')
-              # print(proc15.iloc[:,0:15].head())
+              print('proc15')
+              print(proc15.iloc[:,0:15].head())
 
               # Merge '10 and '15 dataframes.
-              proc = proc10.merge(proc15)
+              # proc = proc10.merge(proc15)
               # print('proc')
               # print(proc.iloc[:,20:40].head())
               # Create shape dir if not exists.
@@ -129,7 +136,7 @@ for shape in shapetypes:
               if (csv == 'index'):
                   if (build_metro == True):
                       print('building metros')
-                      metros = proc.loc[:, ['msaid15', 'msaname15', 'countyfips', 'statefips', 'stateusps', 'in100']]
+                      metros = source.loc[:, ['msaid15', 'msaname15', 'countyfips', 'statefips', 'stateusps', 'in100']]
                       metros = metros.drop_duplicates(subset=['msaid15'], keep='first')
                       # Add a column for whether it's a dual-state metro area.
                       metros['dual'] = metros['msaname15'].str.contains(',\s[A-Z]{2}-[A-Z]{2}', regex=True)
@@ -147,40 +154,79 @@ for shape in shapetypes:
               # Export population data for use building points.
               if (csv == 'pop'):
                   print('building pop data')
-                  pop = proc.loc[:, POP_COLS]
-                  pop = pop.sort_values(by=['GEOID'])
-                  print('pop')
-                  print(pop.head())
-                  pop.to_csv(OUTPUT_DIR + '/' + csv + '.csv', index=False)
-                  pop.to_json(OUTPUT_DIR + '/' + csv + '.json', 'records')
+                  pop10 = proc10[YEAR_AGNOSTIC_POP_COLS]
+                  pop15 = proc15[YEAR_AGNOSTIC_POP_COLS]
+                  pop10 = pop10.sort_values(by=['GEOID'])
+                  pop15 = pop15.sort_values(by=['GEOID'])
+                  print('pop10')
+                  print(pop10.head())
+                  print('pop15')
+                  print(pop15.head())
+                  pop10.to_csv(OUTPUT_DIR + '/' + 'pop10' + '.csv', index=False)
+                  pop10.to_json(OUTPUT_DIR + '/' + 'pop10' + '.json', 'records')
+                  pop15.to_csv(OUTPUT_DIR + '/' + 'pop15' + '.csv', index=False)
+                  pop15.to_json(OUTPUT_DIR + '/' + 'pop15' + '.json', 'records')
 
               # Remove verbose metro title after all other gen work done.
-              proc = proc.drop('msaname15', 1)
+              # proc = proc.drop('msaname15', 1)
+              proc10 = proc10.drop('msaname15', 1)
+              proc15 = proc15.drop('msaname15', 1)
 
               # Combine all processed csvs into a single dataframe for export.
               # print("Is shape_all empty? " + str(shape_all.empty))
-              if shape_all.empty == True:
-                shape_all = proc
+              if shape_all_10.empty == True:
+                # shape_all = proc
+                shape_all_10 = proc10
               else:
-                shape_all = shape_all.merge(proc)
-              print('shape_all')
-              print(shape_all.head())
+                # shape_all = shape_all.merge(proc)
+                shape_all_10 = shape_all_10.merge(proc10)
+
+              if shape_all_15.empty == True:
+                # shape_all = proc
+                shape_all_15 = proc15
+              else:
+                shape_all_15 = shape_all_15.merge(proc15)
+              print('shape_all_10')
+              print(shape_all_10.head())
+              print('shape_all_10 columns:')
+              print(shape_all_10.columns.values.tolist())
+              print('shape_all_15')
+              print(shape_all_15.head())
           else:
               print(f'File at {path} doesn\'t seem to exist!')
-      if shape_all.empty != True:
+      if shape_all_10.empty != True:
         # If shape is tracts, write an limited set to go on tiles.
-        tracts = shape_all[TRACT_GEOJSON_COLS]
-        tracts.to_csv(f'{OUTPUT_DIR}/tracts.csv', index=False)
-        tracts.to_json(f'{OUTPUT_DIR}/tracts.json', 'records')
+        # tracts = shape_all[TRACT_GEOJSON_COLS]
+        # tracts.to_csv(f'{OUTPUT_DIR}/tracts.csv', index=False)
+        # tracts.to_json(f'{OUTPUT_DIR}/tracts.json', 'records')
+
+        tracts10 = shape_all_10[TRACT_BY_YEAR_COLS]
+        print('tracts10')
+        print(tracts10.head())
+        tracts10.to_csv(f'{OUTPUT_DIR}/tracts10.csv', index=False)
+        tracts10.to_json(f'{OUTPUT_DIR}/tracts10.json', 'records')
+        # Also write combined dataframe for all included CSV files to CSV and JSON files.
+        shape_all_10.to_csv(f'{OUTPUT_DIR}/{shape}10-all-data.csv', index=False)
+        shape_all_10.to_json(f'{OUTPUT_DIR}/{shape}10-all-data.json', 'records')
+
+      if shape_all_15.empty != True:
+        tracts15 = shape_all_15[TRACT_BY_YEAR_COLS]
+        tracts15.to_csv(f'{OUTPUT_DIR}/tracts15.csv', index=False)
+        tracts15.to_json(f'{OUTPUT_DIR}/tracts15.json', 'records')
+        # Also write combined dataframe for all included CSV files to CSV and JSON files.
+        shape_all_15.to_csv(f'{OUTPUT_DIR}/{shape}15-all-data.csv', index=False)
+        shape_all_15.to_json(f'{OUTPUT_DIR}/{shape}15-all-data.json', 'records')
 
         # Make a smaller set for download.
-        tracts_sm = shape_all[TRACT_APP_COLS]
-        tracts_sm.to_csv(f'{OUTPUT_DIR}/tracts-sm.csv', index=False)
-        tracts_sm.to_json(f'{OUTPUT_DIR}/tracts-sm.json', 'records')
+        # tracts_sm = shape_all[TRACT_APP_COLS]
+        # tracts_sm.to_csv(f'{OUTPUT_DIR}/tracts-sm.csv', index=False)
+        # tracts_sm.to_json(f'{OUTPUT_DIR}/tracts-sm.json', 'records')
 
-        # Also write combined dataframe for all included CSV files to CSV and JSON files.
-        shape_all.to_csv(f'{OUTPUT_DIR}/{shape}-all-data.csv', index=False)
-        shape_all.to_json(f'{OUTPUT_DIR}/{shape}-all-data.json', 'records')
+        # # Also write combined dataframe for all included CSV files to CSV and JSON files.
+        # shape_all_10.to_csv(f'{OUTPUT_DIR}/{shape}10-all-data.csv', index=False)
+        # shape_all_10.to_json(f'{OUTPUT_DIR}/{shape}10-all-data.json', 'records')
+        # shape_all_15.to_csv(f'{OUTPUT_DIR}/{shape}15-all-data.csv', index=False)
+        # shape_all_15.to_json(f'{OUTPUT_DIR}/{shape}15-all-data.json', 'records')
 
     if (shape == 'states'):
       path = f'{SOURCE_DIR}/{shape}/{states_src}.csv'

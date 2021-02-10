@@ -15,7 +15,8 @@ counties-geoid = "this.properties.GEOID = this.properties.STATE + this.propertie
 states-geoid =  "this.properties.GEOID = this.properties.STATE"
 metros-geoid =  "this.properties.GEOID = this.properties.CBSA"
 
-geo_types = tracts states metros
+# geo_types = tracts states metros
+geo_types = tracts states
 GENERATED_FILES = $(foreach t, $(geo_types), geojson/$(t).geojson)
 
 .PHONY: all deploy help
