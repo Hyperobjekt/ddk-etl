@@ -39,7 +39,7 @@ if os.path.exists(metros_path):
     metros = pd.read_csv(metros_path)
     # print('printing metros, line 40')
     # print(metros.head())
-    metros = metros.drop(['countyfips', 'statefips', 'stateusps', 'in100'], axis=1)
+    metros = metros.drop(['countyfips', 's', 'stateusps', 'in100'], axis=1)
     metros_list = metros.to_dict('records')
 states = pd.DataFrame()
 # Prep list of states to receive state info.

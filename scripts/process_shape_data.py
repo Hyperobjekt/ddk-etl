@@ -59,12 +59,12 @@ for shape in shapetypes:
               # raw, prefix with "r_"
               if (csv == 'raw'):
                   # Preface all columns in raw with an _r
-                  new_cols = list(source.columns)
-                  for i, val in enumerate(new_cols, start=0):
-                    if i > 8:
-                      new_cols[i] = 'r_' + val
-                  source.columns = new_cols
-                  print('Prefixed raw columns')
+                  # new_cols = list(source.columns)
+                  # for i, val in enumerate(new_cols, start=0):
+                  #   if i > 8:
+                  #     new_cols[i] = 'r_' + val
+                  # source.columns = new_cols
+                  # print('Prefixed raw columns')
                   print(source.head())
               # Replace categorical strings in each categorical column with numbers.
               if (csv == 'index'):
@@ -95,7 +95,7 @@ for shape in shapetypes:
               pre10 = source10.iloc[:, [0,1,2,3,4,5,6,7,8]]
 
               # Isolate data columns and rename with '10' suffix.
-              data10 = source10.iloc[:, 9:].round(3)
+              data10 = source10.iloc[:, 9:].round(2)
 
               # Round data columns to 10 decimal places.
               # proc10 = source10.iloc[:, 8:].round(3)
@@ -114,7 +114,7 @@ for shape in shapetypes:
               pre15 = source15.iloc[:, [0,1,2,3,4,5,6,7,8]]
 
               # Isolate data columns and rename with '15' suffix.
-              data15 = source15.iloc[:, 9:].round(3)
+              data15 = source15.iloc[:, 9:].round(2)
 
               # Round data columns to 10 decimal places.
               # proc15 = source15.iloc[:, 8:].round(3)
@@ -136,12 +136,12 @@ for shape in shapetypes:
               if (csv == 'index'):
                   if (build_metro == True):
                       print('building metros')
-                      metros = source.loc[:, ['msaid15', 'msaname15', 'countyfips', 'statefips', 'stateusps', 'in100']]
-                      metros = metros.drop_duplicates(subset=['msaid15'], keep='first')
+                      metros = source.loc[:, ['m', 'msaname15', 'countyfips', 's', 'stateusps', 'in100']]
+                      metros = metros.drop_duplicates(subset=['m'], keep='first')
                       # Add a column for whether it's a dual-state metro area.
-                      metros['dual'] = metros['msaname15'].str.contains(',\s[A-Z]{2}-[A-Z]{2}', regex=True)
-                      metros['dual'] = metros['dual'].fillna(0).astype(int)
-                      metros.rename(columns={'msaid15': 'GEOID'}, inplace=True)
+                      metros['du'] = metros['msaname15'].str.contains(',\s[A-Z]{2}-[A-Z]{2}', regex=True)
+                      metros['du'] = metros['du'].fillna(0).astype(int)
+                      metros.rename(columns={'m': 'GEOID'}, inplace=True)
                       # Type as number because we're getting mismatches.
                       metros['GEOID'] = metros['GEOID'].astype(str)
                       metros = metros.dropna(axis=0)

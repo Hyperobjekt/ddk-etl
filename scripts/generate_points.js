@@ -97,10 +97,10 @@ const getPoints = ({ GEOID, c, v, m, s }) => {
       const lng = minX + Math.random() * (maxX - minX);
 
       const randomPoint = turf.point([lng, lat], {
-        tract: GEOID,
-        type: column,
-        met: met,
-        state: state
+        trct: GEOID,
+        typ: column,
+        m: met,
+        s: state
       });
 
       if (turf.booleanPointInPolygon(randomPoint, feature)) {
@@ -164,7 +164,7 @@ fs.readFile(tracts_geo_source, 'utf8', (err, data) => {
             }
             for (var v = 0; v < pop_cols.length; v++) {
               // const d = rows[b]
-              const p = { GEOID: d.GEOID, c: pop_cols[v], v: d[pop_cols[v]], m: d.msaid15, s:d.statefips };
+              const p = { GEOID: d.GEOID, c: pop_cols[v], v: d[pop_cols[v]], m: d.m, s:d.s };
               const points = getPoints(p);
               if (points && points.length > 0) {
                 fs.appendFileSync(`./${output_dir}/geojson/points_${pop_cols[v]}${points_year}.geojson`, points, (err) => {

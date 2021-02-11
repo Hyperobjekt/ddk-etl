@@ -57,11 +57,9 @@ for shape in shapetypes:
                         source = source[['column', 'type', 'label', 'description']]
                     # raw, prefix with "r_"
                     if (csv == 'raw'):
-                        source['column'] = 'r_' + source['column'].astype(str)
-                        # source['column'] = source['column'].add_prefix('r_')
-                        # source = source.rename(columns=REPLACE_RAW_DICT)
-                        print('Prefixed raw column column.')
-                        print(source.head())
+                        # source['column'] = 'r_' + source['column'].astype(str)
+                        # print('Prefixed raw column column.')
+                        # print(source.head())
                         source = source[['column', 'type', 'label', 'description', 'indicator',	'min', 'mean', 'max', 'decimals', 'currency', 'alt_units', 'high_is_good']]
                 source = source.drop([0,1,2,3,4,5,6,7,8])
                 # print(source.head())

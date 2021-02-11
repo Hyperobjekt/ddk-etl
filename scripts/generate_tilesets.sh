@@ -90,7 +90,7 @@ if [[ $deploy_points -eq 1 ]]; then
   do
     echo "Generating tileset for for ${type}${points_year}."
     # Create tileset from points geojson file.
-    tippecanoe -Z${min_zoom} -z${max_zoom} -o ./mbtiles/points_${type}${points_year}.mbtiles -l ${type}${points_year} --generate-ids --no-feature-limit --drop-densest-as-needed --force ./${OUTPUT_DIR}/geojson/points_${type}${points_year}.geojson
+    tippecanoe -Z${min_zoom} -z${max_zoom} -o ./mbtiles/points_${type}${points_year}.mbtiles -l ${type} --generate-ids --no-feature-limit --drop-densest-as-needed --force ./${OUTPUT_DIR}/geojson/points_${type}${points_year}.geojson
     # Deploy tileset with version number.
     node ./scripts/deploy_tileset.js "./mbtiles/points_${type}${points_year}.mbtiles" "points_${type}${points_year}_${version}"
   done
