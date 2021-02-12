@@ -205,6 +205,10 @@ for shape in shapetypes:
         print(tracts10.head())
         tracts10.to_csv(f'{OUTPUT_DIR}/tracts10.csv', index=False)
         tracts10.to_json(f'{OUTPUT_DIR}/tracts10.json', 'records')
+        # Raw data for indicators
+        raw10 = shape_all_10[RAW_DATA_COLS]
+        raw10.to_csv(f'{OUTPUT_DIR}/raw10.csv', index=False)
+        raw10.to_json(f'{OUTPUT_DIR}/raw10.json', 'records')
         # Also write combined dataframe for all included CSV files to CSV and JSON files.
         shape_all_10.to_csv(f'{OUTPUT_DIR}/{shape}10-all-data.csv', index=False)
         shape_all_10.to_json(f'{OUTPUT_DIR}/{shape}10-all-data.json', 'records')
@@ -213,6 +217,10 @@ for shape in shapetypes:
         tracts15 = shape_all_15[TRACT_BY_YEAR_COLS]
         tracts15.to_csv(f'{OUTPUT_DIR}/tracts15.csv', index=False)
         tracts15.to_json(f'{OUTPUT_DIR}/tracts15.json', 'records')
+        # Raw data for indicators
+        raw15 = shape_all_15[RAW_DATA_COLS]
+        raw15.to_csv(f'{OUTPUT_DIR}/raw15.csv', index=False)
+        raw15.to_json(f'{OUTPUT_DIR}/raw15.json', 'records')
         # Also write combined dataframe for all included CSV files to CSV and JSON files.
         shape_all_15.to_csv(f'{OUTPUT_DIR}/{shape}15-all-data.csv', index=False)
         shape_all_15.to_json(f'{OUTPUT_DIR}/{shape}15-all-data.json', 'records')

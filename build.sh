@@ -126,6 +126,31 @@ if [ ! -z $SHOULD_BUILD ]; then
         echo "Here's what's in ./geojson:"
         tree ./geojson
       fi
+      # Copy files that need to be gzipped to a new dir and gzip them.
+      csv_files=( pop raw )
+      csv_years=(`echo $SHAPES_YEARS | tr ',' ' '`)
+      mkdir gzip
+      cp ./proc/helpers/en_US.json gzip
+      cp ./proc/metros.json gzip
+      cp ./proc/barcharts/barcharts.json gzip
+      cp ./proc/helpers/indicators.json gzip
+      for file in "${csv_files[@]}"
+      do
+        for year in "${csv_years[@]}"
+        do
+          cp "./proc/${file}${year}.csv" gzip
+        done
+      done
+      echo 'Copied files to uploads dir.'
+      ls -la gzip
+      gzip -r gzip
+      tree gzip
+      aws s3 cp --recursive ./gzip s3://ddk-source/proc/${DATA_VERSION}/gzip/ \
+       --acl=public-read \
+       --content-encoding=gzip \
+       --region=us-east-1 \
+		   --cache-control max-age=2628000
+      # aws s3 cp ./tilesets s3://$(S3_TILESETS_BUCKET)/$(BUILD_ID) --recursive --acl=public-read --content-encoding=gzip --region=us-east-2 --cache-control max-age=2628000
       # Remove geojson files before uploading.
       rm -rf ./proc/geojson/*
       # Deploy files into the appropriate version directory.
