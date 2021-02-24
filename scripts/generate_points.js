@@ -160,7 +160,7 @@ fs.readFile(tracts_geo_source, 'utf8', (err, data) => {
           for (var b = 0; b < rows.length; b++) {
             const d = rows[b]
             if (b % 1000 === 0) {
-              console.log(`Working on row ${b}, msaid ${d.msaid15}.`);
+              console.log(`Working on row ${b}, msaid ${d.m}.`);
             }
             for (var v = 0; v < pop_cols.length; v++) {
               // const d = rows[b]
