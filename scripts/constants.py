@@ -11,7 +11,7 @@ LONG_STRING_COLS = ['c5_ed_nat', 'c5_he_nat', 'c5_se_nat', 'c5_coi_nat', 'c5_ed_
 # Columns to include on tracts json to go into tilesset
 # TRACT_GEOJSON_COLS = ['GEOID', 'in100', 'msaid15', 'countyfips', 'statefips', 'stateusps', 'pop', 'xc5en10', 'xc5hn10', 'xc5on10', 'xc5cn10', 'xc5es10', 'xc5hs10', 'xc5os10', 'xc5cs10', 'xc5em10', 'xc5hm10', 'xc5om10', 'xc5cm10', 'xc5en15', 'xc5hn15', 'xc5on15', 'xc5cn15', 'xc5es15', 'xc5hs15', 'xc5os15', 'xc5cs15', 'xc5em15', 'xc5hm15', 'xc5om15', 'xc5cm15']
 # With shortened index prefix.
-TRACT_GEOJSON_COLS = ['GEOID', 'in100', 'msaid15', 'countyfips', 'statefips', 'stateusps', 'pop', 'xen10', 'xhn10', 'xon10', 'xcn10', 'xes10', 'xhs10', 'xos10', 'xcs10', 'xem10', 'xhm10', 'xom10', 'xcm10', 'xen15', 'xhn15', 'xon15', 'xcn15', 'xes15', 'xhs15', 'xos15', 'xcs15', 'xem15', 'xhm15', 'xom15', 'xcm15']
+TRACT_GEOJSON_COLS = ['GEOID', 'i', 'msaid15', 'countyfips', 'statefips', 'stateusps', 'pop', 'xen10', 'xhn10', 'xon10', 'xcn10', 'xes10', 'xhs10', 'xos10', 'xcs10', 'xem10', 'xhm10', 'xom10', 'xcm10', 'xen15', 'xhn15', 'xon15', 'xcn15', 'xes15', 'xhs15', 'xos15', 'xcs15', 'xem15', 'xhm15', 'xom15', 'xcm15']
 # For json file for download
 # TRACT_APP_COLS =
 # ['GEOID', 'in100', 'msaid15', 'countyfips', 'statefips', 'stateusps', 'pop', 'xen10', 'xhn10', 'xon10', 'xcn10', 'xes10', 'xhs10', 'xos10', 'xcs10', 'xem10', 'xhm10', 'xom10', 'xcm10', 'xen15', 'xhn15', 'xon15', 'xcn15', 'xes15', 'xhs15', 'xos15', 'xcs15', 'xem15', 'xhm15', 'xom15', 'xcm15'
@@ -19,12 +19,12 @@ TRACT_APP_COLS = ["GEOID","in100","msaid15","countyfips","statefips","stateusps"
 # Columns for year-specific tract csv files.
 # TRACT_BY_YEAR_COLS = ["GEOID","in100","m","s","pop","xen","xhn","xon","xcn","xes","xhs","xos","xcs","xem","xhm","xom","xcm","reap","reat","reco","reec","rehs","rema","rere","resc","rete","repe","reph","rhfo","rhgr","rhha","rhhl","rhoz","rhpm","rhva","rhwa","rhsu","rhrs","ropo","ropu","roho","rooc","romh","roem","rojo","rosi","ai", "ap", "b", "hi", "w"]
 # TRACT_BY_YEAR_COLS = ["GEOID","in100","m","s","pop","xen","xhn","xon","xcn","xes","xhs","xos","xcs","xem","xhm","xom","xcm","eap","eat","eco","eec","ehs","ema","ere","esc","ete","epe","eph","hfo","hgr","hha","hhl","hoz","hpm","hva","hwa","hsu","hrs","opo","opu","oho","ooc","omh","oem","ojo","osi","ai", "ap", "b", "hi", "w"]
-TRACT_BY_YEAR_COLS = ["GEOID","in100","m","s","xen","xhn","xon","xcn","xes","xhs","xos","xcs","xem","xhm","xom","xcm"]
+TRACT_BY_YEAR_COLS = ["GEOID","i","m","s","xen","xhn","xon","xcn","xes","xhs","xos","xcs","xem","xhm","xom","xcm"]
 RAW_DATA_COLS = ["GEOID", "eap", "eat", "eco", "eec", "ehs", "ema", "ere", "esc", "ete", "epe", "eph", "hfo", "hgr", "hha", "hhl", "hoz", "hpm", "hva", "hwa", "hsu", "hrs", "opo", "opu", "oho", "ooc", "omh", "oem", "ojo", "osi"]
 # Columns for population exports.
 POP_COLS = ['GEOID', 'in100', 'msaid15', 'countyfips', 'statefips', 'pop', 'ai10', 'ap10', 'b10', 'hi10', 'o210', 'nw10', 'w10', 't10', 'ai15', 'ap15', 'b15', 'hi15', 'o215', 'nw15', 'w15', 't15']
 # YEAR_AGNOSTIC_POP_COLS = ['GEOID', 'm', 'countyfips', 's', 'pop', 'ai', 'ap', 'b', 'hi', 'o2', 'nw', 'w', 't']
-YEAR_AGNOSTIC_POP_COLS = ['GEOID', 'm', 's', 'pop', 'ai', 'ap', 'b', 'hi', 'w']
+YEAR_AGNOSTIC_POP_COLS = ['GEOID', 'i', 'm', 's', 'pop', 'ai', 'ap', 'b', 'hi', 'w']
 # Key for these conversions of string to number.
 REPLACE_DICT = {'Very Low': 0, 'Low': 1, 'Moderate': 2, 'High': 3, 'Very High': 4}
 # Replace to shorten column headers and keep json small.
@@ -32,6 +32,7 @@ SEARCH_AND_REPLACE = {
     'geoid': 'GEOID',
     'msaid15': 'm',
     'statefips': 's',
+    'in100': 'i',
     # Demographic
     'aian': 'ai', # American Indian or Native Alaskan, add to dot density
     'black': 'b',

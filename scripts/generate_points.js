@@ -97,12 +97,12 @@ const getPoints = ({ GEOID, c, v, m, s, i }) => {
       const lng = minX + Math.random() * (maxX - minX);
 
       const randomPoint = turf.point([lng, lat], {
-        trct: GEOID,
-        // typ: column,
+        t: GEOID,
         m: met,
         s: state,
         i: in100,
       });
+      // console.log("randomPoint: ", randomPoint);
 
       if (turf.booleanPointInPolygon(randomPoint, feature)) {
         // console.log('point is in tract, ', randomPoint);
@@ -143,7 +143,7 @@ fs.readFile(tracts_geo_source, "utf8", (err, data) => {
       } else {
         console.log("Loaded demographic json.");
         const rows = JSON.parse(data);
-        console.log("rows.length, ", rows.length);
+        // console.log("rows.length, ", rows.length);
         // Make files to write to.
         for (var v = 0; v < pop_cols.length; v++) {
           // console.log(`Writing file ${v}`, featureCollectionPrefix)
@@ -168,7 +168,7 @@ fs.readFile(tracts_geo_source, "utf8", (err, data) => {
         for (var b = 0; b < rows.length; b++) {
           const d = rows[b];
           if (b % 1000 === 0) {
-            console.log(`Working on row ${b}, msaid ${d.m}.`);
+            console.log(`Working on row ${b}, msaid ${d.m}.`, d);
           }
           for (var v = 0; v < pop_cols.length; v++) {
             // const d = rows[b]
@@ -178,8 +178,9 @@ fs.readFile(tracts_geo_source, "utf8", (err, data) => {
               v: d[pop_cols[v]],
               m: d.m,
               s: d.s,
-              i: d.in100,
+              i: d.i,
             };
+            // console.log("calling getPoints, ", p);
             const points = getPoints(p);
             if (points && points.length > 0) {
               fs.appendFileSync(

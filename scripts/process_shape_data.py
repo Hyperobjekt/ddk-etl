@@ -136,7 +136,7 @@ for shape in shapetypes:
               if (csv == 'index'):
                   if (build_metro == True):
                       print('building metros')
-                      metros = source.loc[:, ['m', 'msaname15', 'countyfips', 's', 'stateusps', 'in100']]
+                      metros = source.loc[:, ['m', 'msaname15', 'countyfips', 's', 'stateusps', 'i']]
                       metros = metros.drop_duplicates(subset=['m'], keep='first')
                       # Add a column for whether it's a dual-state metro area.
                       metros['du'] = metros['msaname15'].str.contains(',\s[A-Z]{2}-[A-Z]{2}', regex=True)
